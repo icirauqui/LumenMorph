@@ -101,13 +101,12 @@ does not require the solver to access an existing bank.
 backend/.venv/bin/python -m backend.src.benchmark --help
 ```
 
-The original generator code and its accompanying documentation are licensed
-under [MIT](LICENSE), as approved by the copyright holder on 2026-09-11.
-Dependencies retain their own licenses; in particular, the `ContinuumFEM`
-solver retains its existing GPLv3 license. The generator's MIT
-notice does not relicense the solver or other third-party software. Generated
-Paper 0 benchmark data are separately licensed under CC BY 4.0; distribute the
-benchmark's accompanying data-license notice and preserve source/binary notices.
+LumenMorph and its accompanying documentation are licensed under
+[MIT](LICENSE), as approved by the copyright holder on 2026-09-11.
+The separately maintained `ContinuumFEM` submodule is also MIT-licensed.
+Other dependencies retain their own licenses. Generated Paper 0 benchmark data
+are separately licensed under CC BY 4.0; distribute the benchmark's
+accompanying data-license notice and preserve third-party source/binary notices.
 
 ## Quick Start
 
