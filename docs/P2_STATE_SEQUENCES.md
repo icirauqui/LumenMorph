@@ -1,0 +1,13 @@
+# Frozen P2 states to material-attached triangle sequences
+
+`backend.src.p2_state_sequence.P2RenderMapping` is an opt-in NumPy-only adapter. It consumes an explicit scalar-to-vector DOF index map exported by the FE solver's public component-layout API; it never assumes XYZ interleaving. It does not solve mechanics or interpolate between equilibria.
+
+Construct the adapter from a fixed reference render-vertex array in metres, fixed triangle connectivity, parent-facet vertex P2 weights shaped(F,V,10), canonical scalar-element DOFs(F,10), and the complete scalar-to-vector displacement index map(N,3). Every render triangle must retain one parent facet. `vertices_meter(displacement_only_vector,length_scale_meter)` evaluates a stored dimensionless displacement with explicit physical scaling. Strip pressure/other unknowns using the source solver's declared displacement size; no automatic prefix inference occurs in the adapter.
+
+`composed_material_weights(triangle_ids,barycentrics)` returns reference positions, parent scalar DOFs and the ten weights obtained by blending render-vertex weights. `material_points_meter(...)` evaluates those fixed material queries at another state. This describes the piecewise-planar rendered surface. It is different from evaluating quadratic FE shape functions at an interpolated tetrahedral coordinate. The renderer independently converts vertices to float32, so report this quantization difference separately.
+
+Keep reference material XYZ fixed across states when passing `material_reference_vertices_meter` and `continuous_material` to `render_endoscopic`. Recomputing the field in deformed world coordinates makes texture slide. Store exact ordered topology identity alongside triangle IDs/barycentrics. Use `endoscopic_truth.material_flow` for target projection and continuous endpoint visibility; source observation support and target aperture are separate from geometric validity and background.
+
+For temporal response, record image timestamps independently from load factors. Propagate `next_log_gain` with the actual elapsed time. An accepted equilibrium state is not a time-integrated dynamic state. Background-dominated median metering can clamp gain and saturate visible surfaces; retain this failure rather than tuning a camera to make integration appear successful.
+
+A workspace development fixture is documented in `docs/research/artifacts/paper0_extension_20260911/NONLINEAR_SEQUENCE_PROTOCOL.md` and `NONLINEAR_SEQUENCE_REVIEW.md`. It refers to the original isotropic/HGO state archives and a single shared P2 mapping without duplicating mesh histories. Those states are volume-inaccurate and underresolved; successful material transport is not mechanics or clinical validation.

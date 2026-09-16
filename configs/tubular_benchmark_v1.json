@@ -1,0 +1,1475 @@
+{
+  "schema": "meshmeld_tubular_benchmark_v1",
+  "dataset_versions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18
+  ],
+  "conditions": [
+    "static",
+    "fem",
+    "nonfem"
+  ],
+  "families": [
+    {
+      "id": "f01",
+      "split": "development",
+      "generator_config": {
+        "version": "tubular-benchmark-1",
+        "seed": 310031,
+        "scene_type": "tube",
+        "sequence_count": {
+          "train": 1,
+          "val": 0,
+          "test": 0
+        },
+        "default_preset_cycle": [
+          "colon_benchmark"
+        ],
+        "intrinsics": {
+          "width": 640,
+          "height": 480,
+          "fx": 455.0,
+          "fy": 452.0,
+          "cx": 320.0,
+          "cy": 240.0
+        },
+        "sequence": {
+          "num_frames": 90,
+          "fps": 15,
+          "mesh_nx": 24,
+          "mesh_ny": 24,
+          "x_min": -4.0,
+          "x_max": 4.0,
+          "y_min": 0.0,
+          "y_max": 4.0
+        },
+        "camera": {
+          "base_x": 0.0,
+          "base_y": 0.0,
+          "base_z": 0.0,
+          "forward_drift_per_s": 0.0,
+          "orbit_radius": 0.0,
+          "orbit_frequency_hz": 0.0,
+          "lateral_amplitude": 0.0,
+          "lateral_frequency_hz": 0.0,
+          "lookahead_distance": 4.0,
+          "lookat_height": 0.0,
+          "roll_jitter_deg": 0.2,
+          "pitch_jitter_deg": 0.3,
+          "yaw_jitter_deg": 0.3
+        },
+        "texture": {
+          "width": 1536,
+          "height": 1536,
+          "min_orb_features": 500,
+          "max_attempts": 1
+        },
+        "photometric": {
+          "gaussian_sigma": 0.35,
+          "gain_jitter": 0.005
+        },
+        "output": {
+          "write_frames": true,
+          "write_mp4": true,
+          "write_mesh_state": true
+        },
+        "validation": {
+          "min_orb_features_mean": 260.0,
+          "min_orb_features_frame": 100.0,
+          "min_frame_motion": 0.02,
+          "min_camera_clearance": 1.1,
+          "max_abs_mesh_z": 10.0
+        },
+        "difficulty_presets": {
+          "colon_benchmark": {
+            "wave_count": 0,
+            "amp_min": 0.0,
+            "amp_max": 0.0,
+            "freq_min": 0.0,
+            "freq_max": 0.0,
+            "omega_min": 0.0,
+            "omega_max": 0.0,
+            "drift_scale": 1.0,
+            "jitter_scale": 1.0,
+            "curve_scale": 1.0
+          }
+        },
+        "plane": {
+          "landmark_count": 0,
+          "landmark_height_min": 1.8,
+          "landmark_height_max": 4.8,
+          "landmark_sigma_min": 1.0,
+          "landmark_sigma_max": 3.5,
+          "rigid_ratio": 0.0,
+          "rigid_include_landmarks": true,
+          "rigid_edge_softness": 1,
+          "rigid_colorize": false,
+          "rigid_tint_bgr": [
+            40,
+            180,
+            255
+          ],
+          "rigid_tint_strength": 0.35,
+          "flip_vertical_view": false
+        },
+        "tube": {
+          "axis": {
+            "sections": [
+              {
+                "kind": "straight",
+                "length": 32.0
+              }
+            ]
+          },
+          "dimensions": {
+            "radial_samples": 48,
+            "longitudinal_samples": 112,
+            "base_radius": 2.5,
+            "min_radius": 1.375,
+            "shell_thickness": 0.4,
+            "cap_ends": true
+          },
+          "surface": {
+            "bump_count": 90,
+            "bump_amp_min": 0.02,
+            "bump_amp_max": 0.1,
+            "bump_sigma_long": 0.022,
+            "bump_sigma_theta": 0.04
+          },
+          "camera": {
+            "offset_ratio": 0.075,
+            "wobble_ratio": 0.035,
+            "wobble_hz": 0.14,
+            "lookahead_distance": 3.6,
+            "end_margin_distance": 17.0
+          },
+          "deformation": {
+            "flow_mode": "cyclic",
+            "flow_cycles": 1.0,
+            "fea": {
+              "young_modulus_pa": 900000.0,
+              "poisson_ratio": 0.28,
+              "axial_elements": 24,
+              "theta_elements": 32,
+              "load_distribution": "gaussian_patch",
+              "load_sigma_cutoff": 3.0
+            },
+            "localized_tint_enabled": false,
+            "localized_tint_bgr": [
+              48,
+              185,
+              255
+            ],
+            "localized_tint_strength": 0.0,
+            "areas": []
+          }
+        }
+      },
+      "reference_frames": 90,
+      "action_frames": 90,
+      "reference_progress": [
+        0.08,
+        0.72,
+        0.47
+      ],
+      "moving_progress": [
+        0.16,
+        0.72
+      ],
+      "camera_offset_ratio": 0.16,
+      "patches": [
+        {
+          "s": 0.59,
+          "theta": 0.1,
+          "sigma_s": 0.115,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.3,
+            0.15
+          ]
+        },
+        {
+          "s": 0.69,
+          "theta": 0.55,
+          "sigma_s": 0.13,
+          "sigma_theta": 0.18,
+          "direction": [
+            -0.5,
+            0.45,
+            1.0
+          ]
+        },
+        {
+          "s": 0.32,
+          "theta": 0.32,
+          "sigma_s": 0.12,
+          "sigma_theta": 0.16,
+          "direction": [
+            -0.7,
+            1.0,
+            -0.3
+          ]
+        }
+      ],
+      "fem_peak_fractions": [
+        0.06,
+        0.05,
+        0.04
+      ],
+      "nonfem_peak_fractions": [
+        0.12,
+        0.1,
+        0.08
+      ],
+      "amplitude_regime": "moderate"
+    },
+    {
+      "id": "f02",
+      "split": "development",
+      "generator_config": {
+        "version": "tubular-benchmark-1",
+        "seed": 311040,
+        "scene_type": "tube",
+        "sequence_count": {
+          "train": 1,
+          "val": 0,
+          "test": 0
+        },
+        "default_preset_cycle": [
+          "colon_benchmark"
+        ],
+        "intrinsics": {
+          "width": 640,
+          "height": 480,
+          "fx": 455.0,
+          "fy": 452.0,
+          "cx": 320.0,
+          "cy": 240.0
+        },
+        "sequence": {
+          "num_frames": 90,
+          "fps": 15,
+          "mesh_nx": 24,
+          "mesh_ny": 24,
+          "x_min": -4.0,
+          "x_max": 4.0,
+          "y_min": 0.0,
+          "y_max": 4.0
+        },
+        "camera": {
+          "base_x": 0.0,
+          "base_y": 0.0,
+          "base_z": 0.0,
+          "forward_drift_per_s": 0.0,
+          "orbit_radius": 0.0,
+          "orbit_frequency_hz": 0.0,
+          "lateral_amplitude": 0.0,
+          "lateral_frequency_hz": 0.0,
+          "lookahead_distance": 4.0,
+          "lookat_height": 0.0,
+          "roll_jitter_deg": 0.2,
+          "pitch_jitter_deg": 0.3,
+          "yaw_jitter_deg": 0.3
+        },
+        "texture": {
+          "width": 1536,
+          "height": 1536,
+          "min_orb_features": 500,
+          "max_attempts": 1
+        },
+        "photometric": {
+          "gaussian_sigma": 0.65,
+          "gain_jitter": 0.01
+        },
+        "output": {
+          "write_frames": true,
+          "write_mp4": true,
+          "write_mesh_state": true
+        },
+        "validation": {
+          "min_orb_features_mean": 260.0,
+          "min_orb_features_frame": 100.0,
+          "min_frame_motion": 0.02,
+          "min_camera_clearance": 1.1,
+          "max_abs_mesh_z": 10.0
+        },
+        "difficulty_presets": {
+          "colon_benchmark": {
+            "wave_count": 0,
+            "amp_min": 0.0,
+            "amp_max": 0.0,
+            "freq_min": 0.0,
+            "freq_max": 0.0,
+            "omega_min": 0.0,
+            "omega_max": 0.0,
+            "drift_scale": 1.0,
+            "jitter_scale": 1.0,
+            "curve_scale": 1.0
+          }
+        },
+        "plane": {
+          "landmark_count": 0,
+          "landmark_height_min": 1.8,
+          "landmark_height_max": 4.8,
+          "landmark_sigma_min": 1.0,
+          "landmark_sigma_max": 3.5,
+          "rigid_ratio": 0.0,
+          "rigid_include_landmarks": true,
+          "rigid_edge_softness": 1,
+          "rigid_colorize": false,
+          "rigid_tint_bgr": [
+            40,
+            180,
+            255
+          ],
+          "rigid_tint_strength": 0.35,
+          "flip_vertical_view": false
+        },
+        "tube": {
+          "axis": {
+            "sections": [
+              {
+                "kind": "straight",
+                "length": 12.0
+              },
+              {
+                "kind": "turn",
+                "direction": "right",
+                "angle_deg": 30.0,
+                "radius": 12.0
+              },
+              {
+                "kind": "straight",
+                "length": 14.0
+              }
+            ]
+          },
+          "dimensions": {
+            "radial_samples": 48,
+            "longitudinal_samples": 112,
+            "base_radius": 2.7,
+            "min_radius": 1.4850000000000003,
+            "shell_thickness": 0.4,
+            "cap_ends": true
+          },
+          "surface": {
+            "bump_count": 90,
+            "bump_amp_min": 0.02,
+            "bump_amp_max": 0.1,
+            "bump_sigma_long": 0.022,
+            "bump_sigma_theta": 0.04
+          },
+          "camera": {
+            "offset_ratio": 0.075,
+            "wobble_ratio": 0.035,
+            "wobble_hz": 0.14,
+            "lookahead_distance": 3.6,
+            "end_margin_distance": 17.0
+          },
+          "deformation": {
+            "flow_mode": "cyclic",
+            "flow_cycles": 1.0,
+            "fea": {
+              "young_modulus_pa": 900000.0,
+              "poisson_ratio": 0.28,
+              "axial_elements": 24,
+              "theta_elements": 32,
+              "load_distribution": "gaussian_patch",
+              "load_sigma_cutoff": 3.0
+            },
+            "localized_tint_enabled": false,
+            "localized_tint_bgr": [
+              48,
+              185,
+              255
+            ],
+            "localized_tint_strength": 0.0,
+            "areas": []
+          }
+        }
+      },
+      "reference_frames": 90,
+      "action_frames": 90,
+      "reference_progress": [
+        0.08,
+        0.72,
+        0.47
+      ],
+      "moving_progress": [
+        0.16,
+        0.72
+      ],
+      "camera_offset_ratio": 0.2,
+      "patches": [
+        {
+          "s": 0.59,
+          "theta": 0.23,
+          "sigma_s": 0.115,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.3,
+            0.15
+          ]
+        },
+        {
+          "s": 0.69,
+          "theta": 0.68,
+          "sigma_s": 0.13,
+          "sigma_theta": 0.18,
+          "direction": [
+            -0.5,
+            0.45,
+            1.0
+          ]
+        },
+        {
+          "s": 0.32,
+          "theta": 0.45,
+          "sigma_s": 0.12,
+          "sigma_theta": 0.16,
+          "direction": [
+            -0.7,
+            1.0,
+            -0.3
+          ]
+        }
+      ],
+      "fem_peak_fractions": [
+        0.06,
+        0.05,
+        0.04
+      ],
+      "nonfem_peak_fractions": [
+        0.12,
+        0.1,
+        0.08
+      ],
+      "amplitude_regime": "moderate"
+    },
+    {
+      "id": "f03",
+      "split": "development",
+      "generator_config": {
+        "version": "tubular-benchmark-1",
+        "seed": 312049,
+        "scene_type": "tube",
+        "sequence_count": {
+          "train": 1,
+          "val": 0,
+          "test": 0
+        },
+        "default_preset_cycle": [
+          "colon_benchmark"
+        ],
+        "intrinsics": {
+          "width": 640,
+          "height": 480,
+          "fx": 455.0,
+          "fy": 452.0,
+          "cx": 320.0,
+          "cy": 240.0
+        },
+        "sequence": {
+          "num_frames": 90,
+          "fps": 15,
+          "mesh_nx": 24,
+          "mesh_ny": 24,
+          "x_min": -4.0,
+          "x_max": 4.0,
+          "y_min": 0.0,
+          "y_max": 4.0
+        },
+        "camera": {
+          "base_x": 0.0,
+          "base_y": 0.0,
+          "base_z": 0.0,
+          "forward_drift_per_s": 0.0,
+          "orbit_radius": 0.0,
+          "orbit_frequency_hz": 0.0,
+          "lateral_amplitude": 0.0,
+          "lateral_frequency_hz": 0.0,
+          "lookahead_distance": 4.0,
+          "lookat_height": 0.0,
+          "roll_jitter_deg": 0.2,
+          "pitch_jitter_deg": 0.3,
+          "yaw_jitter_deg": 0.3
+        },
+        "texture": {
+          "width": 1536,
+          "height": 1536,
+          "min_orb_features": 500,
+          "max_attempts": 1
+        },
+        "photometric": {
+          "gaussian_sigma": 1.1,
+          "gain_jitter": 0.015
+        },
+        "output": {
+          "write_frames": true,
+          "write_mp4": true,
+          "write_mesh_state": true
+        },
+        "validation": {
+          "min_orb_features_mean": 260.0,
+          "min_orb_features_frame": 100.0,
+          "min_frame_motion": 0.02,
+          "min_camera_clearance": 1.1,
+          "max_abs_mesh_z": 10.0
+        },
+        "difficulty_presets": {
+          "colon_benchmark": {
+            "wave_count": 0,
+            "amp_min": 0.0,
+            "amp_max": 0.0,
+            "freq_min": 0.0,
+            "freq_max": 0.0,
+            "omega_min": 0.0,
+            "omega_max": 0.0,
+            "drift_scale": 1.0,
+            "jitter_scale": 1.0,
+            "curve_scale": 1.0
+          }
+        },
+        "plane": {
+          "landmark_count": 0,
+          "landmark_height_min": 1.8,
+          "landmark_height_max": 4.8,
+          "landmark_sigma_min": 1.0,
+          "landmark_sigma_max": 3.5,
+          "rigid_ratio": 0.0,
+          "rigid_include_landmarks": true,
+          "rigid_edge_softness": 1,
+          "rigid_colorize": false,
+          "rigid_tint_bgr": [
+            40,
+            180,
+            255
+          ],
+          "rigid_tint_strength": 0.35,
+          "flip_vertical_view": false
+        },
+        "tube": {
+          "axis": {
+            "sections": [
+              {
+                "kind": "straight",
+                "length": 10.0
+              },
+              {
+                "kind": "turn",
+                "direction": "up",
+                "angle_deg": 35.0,
+                "radius": 13.0
+              },
+              {
+                "kind": "straight",
+                "length": 15.0
+              }
+            ]
+          },
+          "dimensions": {
+            "radial_samples": 48,
+            "longitudinal_samples": 112,
+            "base_radius": 2.3,
+            "min_radius": 1.265,
+            "shell_thickness": 0.4,
+            "cap_ends": true
+          },
+          "surface": {
+            "bump_count": 90,
+            "bump_amp_min": 0.02,
+            "bump_amp_max": 0.1,
+            "bump_sigma_long": 0.022,
+            "bump_sigma_theta": 0.04
+          },
+          "camera": {
+            "offset_ratio": 0.075,
+            "wobble_ratio": 0.035,
+            "wobble_hz": 0.14,
+            "lookahead_distance": 3.6,
+            "end_margin_distance": 17.0
+          },
+          "deformation": {
+            "flow_mode": "cyclic",
+            "flow_cycles": 1.0,
+            "fea": {
+              "young_modulus_pa": 900000.0,
+              "poisson_ratio": 0.28,
+              "axial_elements": 24,
+              "theta_elements": 32,
+              "load_distribution": "gaussian_patch",
+              "load_sigma_cutoff": 3.0
+            },
+            "localized_tint_enabled": false,
+            "localized_tint_bgr": [
+              48,
+              185,
+              255
+            ],
+            "localized_tint_strength": 0.0,
+            "areas": []
+          }
+        }
+      },
+      "reference_frames": 90,
+      "action_frames": 90,
+      "reference_progress": [
+        0.08,
+        0.72,
+        0.47
+      ],
+      "moving_progress": [
+        0.16,
+        0.72
+      ],
+      "camera_offset_ratio": 0.14,
+      "patches": [
+        {
+          "s": 0.59,
+          "theta": 0.36,
+          "sigma_s": 0.115,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.3,
+            0.15
+          ]
+        },
+        {
+          "s": 0.69,
+          "theta": 0.81,
+          "sigma_s": 0.13,
+          "sigma_theta": 0.18,
+          "direction": [
+            -0.5,
+            0.45,
+            1.0
+          ]
+        },
+        {
+          "s": 0.32,
+          "theta": 0.5800000000000001,
+          "sigma_s": 0.12,
+          "sigma_theta": 0.16,
+          "direction": [
+            -0.7,
+            1.0,
+            -0.3
+          ]
+        }
+      ],
+      "fem_peak_fractions": [
+        0.12,
+        0.1,
+        0.08
+      ],
+      "nonfem_peak_fractions": [
+        0.24,
+        0.2,
+        0.16
+      ],
+      "amplitude_regime": "strong_prescribed_kinematics"
+    },
+    {
+      "id": "f04",
+      "split": "validation",
+      "generator_config": {
+        "version": "tubular-benchmark-1",
+        "seed": 313058,
+        "scene_type": "tube",
+        "sequence_count": {
+          "train": 1,
+          "val": 0,
+          "test": 0
+        },
+        "default_preset_cycle": [
+          "colon_benchmark"
+        ],
+        "intrinsics": {
+          "width": 640,
+          "height": 480,
+          "fx": 455.0,
+          "fy": 452.0,
+          "cx": 320.0,
+          "cy": 240.0
+        },
+        "sequence": {
+          "num_frames": 90,
+          "fps": 15,
+          "mesh_nx": 24,
+          "mesh_ny": 24,
+          "x_min": -4.0,
+          "x_max": 4.0,
+          "y_min": 0.0,
+          "y_max": 4.0
+        },
+        "camera": {
+          "base_x": 0.0,
+          "base_y": 0.0,
+          "base_z": 0.0,
+          "forward_drift_per_s": 0.0,
+          "orbit_radius": 0.0,
+          "orbit_frequency_hz": 0.0,
+          "lateral_amplitude": 0.0,
+          "lateral_frequency_hz": 0.0,
+          "lookahead_distance": 4.0,
+          "lookat_height": 0.0,
+          "roll_jitter_deg": 0.2,
+          "pitch_jitter_deg": 0.3,
+          "yaw_jitter_deg": 0.3
+        },
+        "texture": {
+          "width": 1536,
+          "height": 1536,
+          "min_orb_features": 500,
+          "max_attempts": 1
+        },
+        "photometric": {
+          "gaussian_sigma": 0.55,
+          "gain_jitter": 0.01
+        },
+        "output": {
+          "write_frames": true,
+          "write_mp4": true,
+          "write_mesh_state": true
+        },
+        "validation": {
+          "min_orb_features_mean": 260.0,
+          "min_orb_features_frame": 100.0,
+          "min_frame_motion": 0.02,
+          "min_camera_clearance": 1.1,
+          "max_abs_mesh_z": 10.0
+        },
+        "difficulty_presets": {
+          "colon_benchmark": {
+            "wave_count": 0,
+            "amp_min": 0.0,
+            "amp_max": 0.0,
+            "freq_min": 0.0,
+            "freq_max": 0.0,
+            "omega_min": 0.0,
+            "omega_max": 0.0,
+            "drift_scale": 1.0,
+            "jitter_scale": 1.0,
+            "curve_scale": 1.0
+          }
+        },
+        "plane": {
+          "landmark_count": 0,
+          "landmark_height_min": 1.8,
+          "landmark_height_max": 4.8,
+          "landmark_sigma_min": 1.0,
+          "landmark_sigma_max": 3.5,
+          "rigid_ratio": 0.0,
+          "rigid_include_landmarks": true,
+          "rigid_edge_softness": 1,
+          "rigid_colorize": false,
+          "rigid_tint_bgr": [
+            40,
+            180,
+            255
+          ],
+          "rigid_tint_strength": 0.35,
+          "flip_vertical_view": false
+        },
+        "tube": {
+          "axis": {
+            "sections": [
+              {
+                "kind": "straight",
+                "length": 9.0
+              },
+              {
+                "kind": "turn",
+                "direction": "left",
+                "angle_deg": 27.0,
+                "radius": 13.0
+              },
+              {
+                "kind": "straight",
+                "length": 8.0
+              },
+              {
+                "kind": "turn",
+                "direction": "down",
+                "angle_deg": 20.0,
+                "radius": 14.0
+              },
+              {
+                "kind": "straight",
+                "length": 10.0
+              }
+            ]
+          },
+          "dimensions": {
+            "radial_samples": 48,
+            "longitudinal_samples": 112,
+            "base_radius": 2.6,
+            "min_radius": 1.4300000000000002,
+            "shell_thickness": 0.4,
+            "cap_ends": true
+          },
+          "surface": {
+            "bump_count": 90,
+            "bump_amp_min": 0.02,
+            "bump_amp_max": 0.1,
+            "bump_sigma_long": 0.022,
+            "bump_sigma_theta": 0.04
+          },
+          "camera": {
+            "offset_ratio": 0.075,
+            "wobble_ratio": 0.035,
+            "wobble_hz": 0.14,
+            "lookahead_distance": 3.6,
+            "end_margin_distance": 17.0
+          },
+          "deformation": {
+            "flow_mode": "cyclic",
+            "flow_cycles": 1.0,
+            "fea": {
+              "young_modulus_pa": 900000.0,
+              "poisson_ratio": 0.28,
+              "axial_elements": 24,
+              "theta_elements": 32,
+              "load_distribution": "gaussian_patch",
+              "load_sigma_cutoff": 3.0
+            },
+            "localized_tint_enabled": false,
+            "localized_tint_bgr": [
+              48,
+              185,
+              255
+            ],
+            "localized_tint_strength": 0.0,
+            "areas": []
+          }
+        }
+      },
+      "reference_frames": 90,
+      "action_frames": 90,
+      "reference_progress": [
+        0.08,
+        0.72,
+        0.47
+      ],
+      "moving_progress": [
+        0.16,
+        0.72
+      ],
+      "camera_offset_ratio": 0.18,
+      "patches": [
+        {
+          "s": 0.59,
+          "theta": 0.49,
+          "sigma_s": 0.115,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.3,
+            0.15
+          ]
+        },
+        {
+          "s": 0.69,
+          "theta": 0.9400000000000001,
+          "sigma_s": 0.13,
+          "sigma_theta": 0.18,
+          "direction": [
+            -0.5,
+            0.45,
+            1.0
+          ]
+        },
+        {
+          "s": 0.32,
+          "theta": 0.71,
+          "sigma_s": 0.12,
+          "sigma_theta": 0.16,
+          "direction": [
+            -0.7,
+            1.0,
+            -0.3
+          ]
+        }
+      ],
+      "fem_peak_fractions": [
+        0.06,
+        0.05,
+        0.04
+      ],
+      "nonfem_peak_fractions": [
+        0.12,
+        0.1,
+        0.08
+      ],
+      "amplitude_regime": "moderate"
+    },
+    {
+      "id": "f05",
+      "split": "final_test",
+      "generator_config": {
+        "version": "tubular-benchmark-1",
+        "seed": 314067,
+        "scene_type": "tube",
+        "sequence_count": {
+          "train": 1,
+          "val": 0,
+          "test": 0
+        },
+        "default_preset_cycle": [
+          "colon_benchmark"
+        ],
+        "intrinsics": {
+          "width": 640,
+          "height": 480,
+          "fx": 455.0,
+          "fy": 452.0,
+          "cx": 320.0,
+          "cy": 240.0
+        },
+        "sequence": {
+          "num_frames": 90,
+          "fps": 15,
+          "mesh_nx": 24,
+          "mesh_ny": 24,
+          "x_min": -4.0,
+          "x_max": 4.0,
+          "y_min": 0.0,
+          "y_max": 4.0
+        },
+        "camera": {
+          "base_x": 0.0,
+          "base_y": 0.0,
+          "base_z": 0.0,
+          "forward_drift_per_s": 0.0,
+          "orbit_radius": 0.0,
+          "orbit_frequency_hz": 0.0,
+          "lateral_amplitude": 0.0,
+          "lateral_frequency_hz": 0.0,
+          "lookahead_distance": 4.0,
+          "lookat_height": 0.0,
+          "roll_jitter_deg": 0.2,
+          "pitch_jitter_deg": 0.3,
+          "yaw_jitter_deg": 0.3
+        },
+        "texture": {
+          "width": 1536,
+          "height": 1536,
+          "min_orb_features": 500,
+          "max_attempts": 1
+        },
+        "photometric": {
+          "gaussian_sigma": 0.8,
+          "gain_jitter": 0.012
+        },
+        "output": {
+          "write_frames": true,
+          "write_mp4": true,
+          "write_mesh_state": true
+        },
+        "validation": {
+          "min_orb_features_mean": 260.0,
+          "min_orb_features_frame": 100.0,
+          "min_frame_motion": 0.02,
+          "min_camera_clearance": 1.1,
+          "max_abs_mesh_z": 10.0
+        },
+        "difficulty_presets": {
+          "colon_benchmark": {
+            "wave_count": 0,
+            "amp_min": 0.0,
+            "amp_max": 0.0,
+            "freq_min": 0.0,
+            "freq_max": 0.0,
+            "omega_min": 0.0,
+            "omega_max": 0.0,
+            "drift_scale": 1.0,
+            "jitter_scale": 1.0,
+            "curve_scale": 1.0
+          }
+        },
+        "plane": {
+          "landmark_count": 0,
+          "landmark_height_min": 1.8,
+          "landmark_height_max": 4.8,
+          "landmark_sigma_min": 1.0,
+          "landmark_sigma_max": 3.5,
+          "rigid_ratio": 0.0,
+          "rigid_include_landmarks": true,
+          "rigid_edge_softness": 1,
+          "rigid_colorize": false,
+          "rigid_tint_bgr": [
+            40,
+            180,
+            255
+          ],
+          "rigid_tint_strength": 0.35,
+          "flip_vertical_view": false
+        },
+        "tube": {
+          "axis": {
+            "sections": [
+              {
+                "kind": "straight",
+                "length": 11.0
+              },
+              {
+                "kind": "turn",
+                "direction": "right",
+                "angle_deg": 38.0,
+                "radius": 13.0
+              },
+              {
+                "kind": "straight",
+                "length": 12.0
+              }
+            ]
+          },
+          "dimensions": {
+            "radial_samples": 48,
+            "longitudinal_samples": 112,
+            "base_radius": 2.4,
+            "min_radius": 1.32,
+            "shell_thickness": 0.4,
+            "cap_ends": true
+          },
+          "surface": {
+            "bump_count": 90,
+            "bump_amp_min": 0.02,
+            "bump_amp_max": 0.1,
+            "bump_sigma_long": 0.022,
+            "bump_sigma_theta": 0.04
+          },
+          "camera": {
+            "offset_ratio": 0.075,
+            "wobble_ratio": 0.035,
+            "wobble_hz": 0.14,
+            "lookahead_distance": 3.6,
+            "end_margin_distance": 17.0
+          },
+          "deformation": {
+            "flow_mode": "cyclic",
+            "flow_cycles": 1.0,
+            "fea": {
+              "young_modulus_pa": 900000.0,
+              "poisson_ratio": 0.28,
+              "axial_elements": 24,
+              "theta_elements": 32,
+              "load_distribution": "gaussian_patch",
+              "load_sigma_cutoff": 3.0
+            },
+            "localized_tint_enabled": false,
+            "localized_tint_bgr": [
+              48,
+              185,
+              255
+            ],
+            "localized_tint_strength": 0.0,
+            "areas": []
+          }
+        }
+      },
+      "reference_frames": 90,
+      "action_frames": 90,
+      "reference_progress": [
+        0.08,
+        0.72,
+        0.47
+      ],
+      "moving_progress": [
+        0.16,
+        0.72
+      ],
+      "camera_offset_ratio": 0.17,
+      "patches": [
+        {
+          "s": 0.59,
+          "theta": 0.62,
+          "sigma_s": 0.115,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.3,
+            0.15
+          ]
+        },
+        {
+          "s": 0.69,
+          "theta": 0.07000000000000006,
+          "sigma_s": 0.13,
+          "sigma_theta": 0.18,
+          "direction": [
+            -0.5,
+            0.45,
+            1.0
+          ]
+        },
+        {
+          "s": 0.32,
+          "theta": 0.8400000000000001,
+          "sigma_s": 0.12,
+          "sigma_theta": 0.16,
+          "direction": [
+            -0.7,
+            1.0,
+            -0.3
+          ]
+        }
+      ],
+      "fem_peak_fractions": [
+        0.06,
+        0.05,
+        0.04
+      ],
+      "nonfem_peak_fractions": [
+        0.12,
+        0.1,
+        0.08
+      ],
+      "amplitude_regime": "moderate"
+    },
+    {
+      "id": "f06",
+      "split": "final_test",
+      "generator_config": {
+        "version": "tubular-benchmark-1",
+        "seed": 315076,
+        "scene_type": "tube",
+        "sequence_count": {
+          "train": 1,
+          "val": 0,
+          "test": 0
+        },
+        "default_preset_cycle": [
+          "colon_benchmark"
+        ],
+        "intrinsics": {
+          "width": 640,
+          "height": 480,
+          "fx": 455.0,
+          "fy": 452.0,
+          "cx": 320.0,
+          "cy": 240.0
+        },
+        "sequence": {
+          "num_frames": 90,
+          "fps": 15,
+          "mesh_nx": 24,
+          "mesh_ny": 24,
+          "x_min": -4.0,
+          "x_max": 4.0,
+          "y_min": 0.0,
+          "y_max": 4.0
+        },
+        "camera": {
+          "base_x": 0.0,
+          "base_y": 0.0,
+          "base_z": 0.0,
+          "forward_drift_per_s": 0.0,
+          "orbit_radius": 0.0,
+          "orbit_frequency_hz": 0.0,
+          "lateral_amplitude": 0.0,
+          "lateral_frequency_hz": 0.0,
+          "lookahead_distance": 4.0,
+          "lookat_height": 0.0,
+          "roll_jitter_deg": 0.2,
+          "pitch_jitter_deg": 0.3,
+          "yaw_jitter_deg": 0.3
+        },
+        "texture": {
+          "width": 1536,
+          "height": 1536,
+          "min_orb_features": 500,
+          "max_attempts": 1
+        },
+        "photometric": {
+          "gaussian_sigma": 1.3,
+          "gain_jitter": 0.018
+        },
+        "output": {
+          "write_frames": true,
+          "write_mp4": true,
+          "write_mesh_state": true
+        },
+        "validation": {
+          "min_orb_features_mean": 260.0,
+          "min_orb_features_frame": 100.0,
+          "min_frame_motion": 0.02,
+          "min_camera_clearance": 1.1,
+          "max_abs_mesh_z": 10.0
+        },
+        "difficulty_presets": {
+          "colon_benchmark": {
+            "wave_count": 0,
+            "amp_min": 0.0,
+            "amp_max": 0.0,
+            "freq_min": 0.0,
+            "freq_max": 0.0,
+            "omega_min": 0.0,
+            "omega_max": 0.0,
+            "drift_scale": 1.0,
+            "jitter_scale": 1.0,
+            "curve_scale": 1.0
+          }
+        },
+        "plane": {
+          "landmark_count": 0,
+          "landmark_height_min": 1.8,
+          "landmark_height_max": 4.8,
+          "landmark_sigma_min": 1.0,
+          "landmark_sigma_max": 3.5,
+          "rigid_ratio": 0.0,
+          "rigid_include_landmarks": true,
+          "rigid_edge_softness": 1,
+          "rigid_colorize": false,
+          "rigid_tint_bgr": [
+            40,
+            180,
+            255
+          ],
+          "rigid_tint_strength": 0.35,
+          "flip_vertical_view": false
+        },
+        "tube": {
+          "axis": {
+            "sections": [
+              {
+                "kind": "straight",
+                "length": 8.0
+              },
+              {
+                "kind": "turn",
+                "direction": "up",
+                "angle_deg": 25.0,
+                "radius": 12.0
+              },
+              {
+                "kind": "straight",
+                "length": 9.0
+              },
+              {
+                "kind": "turn",
+                "direction": "left",
+                "angle_deg": 25.0,
+                "radius": 15.0
+              },
+              {
+                "kind": "straight",
+                "length": 10.0
+              }
+            ]
+          },
+          "dimensions": {
+            "radial_samples": 48,
+            "longitudinal_samples": 112,
+            "base_radius": 2.8,
+            "min_radius": 1.54,
+            "shell_thickness": 0.4,
+            "cap_ends": true
+          },
+          "surface": {
+            "bump_count": 90,
+            "bump_amp_min": 0.02,
+            "bump_amp_max": 0.1,
+            "bump_sigma_long": 0.022,
+            "bump_sigma_theta": 0.04
+          },
+          "camera": {
+            "offset_ratio": 0.075,
+            "wobble_ratio": 0.035,
+            "wobble_hz": 0.14,
+            "lookahead_distance": 3.6,
+            "end_margin_distance": 17.0
+          },
+          "deformation": {
+            "flow_mode": "cyclic",
+            "flow_cycles": 1.0,
+            "fea": {
+              "young_modulus_pa": 900000.0,
+              "poisson_ratio": 0.28,
+              "axial_elements": 24,
+              "theta_elements": 32,
+              "load_distribution": "gaussian_patch",
+              "load_sigma_cutoff": 3.0
+            },
+            "localized_tint_enabled": false,
+            "localized_tint_bgr": [
+              48,
+              185,
+              255
+            ],
+            "localized_tint_strength": 0.0,
+            "areas": []
+          }
+        }
+      },
+      "reference_frames": 90,
+      "action_frames": 90,
+      "reference_progress": [
+        0.08,
+        0.72,
+        0.47
+      ],
+      "moving_progress": [
+        0.16,
+        0.72
+      ],
+      "camera_offset_ratio": 0.22,
+      "patches": [
+        {
+          "s": 0.59,
+          "theta": 0.75,
+          "sigma_s": 0.115,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.3,
+            0.15
+          ]
+        },
+        {
+          "s": 0.69,
+          "theta": 0.20000000000000018,
+          "sigma_s": 0.13,
+          "sigma_theta": 0.18,
+          "direction": [
+            -0.5,
+            0.45,
+            1.0
+          ]
+        },
+        {
+          "s": 0.32,
+          "theta": 0.97,
+          "sigma_s": 0.12,
+          "sigma_theta": 0.16,
+          "direction": [
+            -0.7,
+            1.0,
+            -0.3
+          ]
+        }
+      ],
+      "fem_peak_fractions": [
+        0.12,
+        0.1,
+        0.08
+      ],
+      "nonfem_peak_fractions": [
+        0.24,
+        0.2,
+        0.16
+      ],
+      "amplitude_regime": "strong_prescribed_kinematics"
+    }
+  ],
+  "fps": 15,
+  "contrasts": {
+    "nominal": {
+      "a": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "b": [
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74
+      ]
+    },
+    "low_signal": {
+      "a": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "b": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44
+      ]
+    }
+  },
+  "local_windows": {
+    "length": 15,
+    "stride": 10
+  },
+  "signal_design": {
+    "nominal_mean_over_radius_min": 0.006,
+    "nominal_p95_over_radius_min": 0.015,
+    "visibility_fraction_min": 0.7
+  },
+  "notes": [
+    "All variants within a family share geometry, texture and action states; they are not independent samples.",
+    "Final-test generation QA is permitted; no inverse deformation outcomes are evaluated.",
+    "Synthetic camera coordinates and FE mechanics are benchmark assumptions, not tissue measurements."
+  ],
+  "preflight_revision": "r1",
+  "low_amplitude_coefficient": 0.02
+}

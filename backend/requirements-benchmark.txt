@@ -1,0 +1,7 @@
+# Minimal numerical runtime for benchmark production, reading, QA and flow study.
+# Verified with CPython 3.12.13 on Linux x86_64. Does not install the browser/API,
+# generic preview CLI, plotting tools or pytest. Solver source is separate;
+# set CONTINUUM_FEM_SRC or use the documented sibling checkout.
+numpy==2.4.4
+scipy==1.17.1
+opencv-python==4.13.0.92

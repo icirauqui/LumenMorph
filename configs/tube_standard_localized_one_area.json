@@ -1,0 +1,208 @@
+{
+  "version": "0.2.2",
+  "seed": 1441,
+  "scene_type": "tube",
+  "sequence_count": {
+    "train": 21,
+    "val": 4,
+    "test": 5
+  },
+  "default_preset_cycle": [
+    "hard"
+  ],
+  "intrinsics": {
+    "width": 640,
+    "height": 480,
+    "fx": 520.0,
+    "fy": 520.0,
+    "cx": 320.0,
+    "cy": 240.0
+  },
+  "sequence": {
+    "num_frames": 300,
+    "fps": 30,
+    "mesh_nx": 44,
+    "mesh_ny": 44,
+    "x_min": -12.0,
+    "x_max": 12.0,
+    "y_min": 0.0,
+    "y_max": 32.0
+  },
+  "camera": {
+    "base_x": 0.0,
+    "base_y": 0.0,
+    "base_z": 0.0,
+    "forward_drift_per_s": 1.2,
+    "orbit_radius": 0.0,
+    "orbit_frequency_hz": 0.08,
+    "lateral_amplitude": 0.0,
+    "lateral_frequency_hz": 0.18,
+    "lookahead_distance": 5.0,
+    "lookat_height": 0.0,
+    "roll_jitter_deg": 2.0,
+    "pitch_jitter_deg": 2.8,
+    "yaw_jitter_deg": 2.6
+  },
+  "texture": {
+    "width": 1024,
+    "height": 1024,
+    "min_orb_features": 350,
+    "max_attempts": 8
+  },
+  "photometric": {
+    "gaussian_sigma": 4.0,
+    "gain_jitter": 0.06
+  },
+  "output": {
+    "write_frames": true,
+    "write_mp4": true,
+    "write_mesh_state": true
+  },
+  "validation": {
+    "min_orb_features_mean": 110.0,
+    "min_frame_motion": 0.001,
+    "min_camera_clearance": 0.05,
+    "max_abs_mesh_z": 40.0
+  },
+  "difficulty_presets": {
+    "easy": {
+      "wave_count": 2,
+      "amp_min": 0.04,
+      "amp_max": 0.11,
+      "freq_min": 0.8,
+      "freq_max": 1.6,
+      "omega_min": 0.6,
+      "omega_max": 1.2,
+      "drift_scale": 0.9,
+      "jitter_scale": 0.6,
+      "curve_scale": 0.65
+    },
+    "hard": {
+      "wave_count": 4,
+      "amp_min": 0.12,
+      "amp_max": 0.3,
+      "freq_min": 1.7,
+      "freq_max": 3.4,
+      "omega_min": 1.2,
+      "omega_max": 2.6,
+      "drift_scale": 1.15,
+      "jitter_scale": 1.45,
+      "curve_scale": 1.65
+    },
+    "medium": {
+      "wave_count": 3,
+      "amp_min": 0.08,
+      "amp_max": 0.2,
+      "freq_min": 1.2,
+      "freq_max": 2.3,
+      "omega_min": 0.9,
+      "omega_max": 1.8,
+      "drift_scale": 1.0,
+      "jitter_scale": 1.0,
+      "curve_scale": 1.0
+    }
+  },
+  "plane": {
+    "landmark_count": 0,
+    "landmark_height_min": 1.8,
+    "landmark_height_max": 4.8,
+    "landmark_sigma_min": 1.0,
+    "landmark_sigma_max": 3.5,
+    "rigid_ratio": 0.0,
+    "rigid_include_landmarks": true,
+    "rigid_edge_softness": 1,
+    "rigid_colorize": false,
+    "rigid_tint_bgr": [
+      40,
+      180,
+      255
+    ],
+    "rigid_tint_strength": 0.35,
+    "flip_vertical_view": false
+  },
+  "tube": {
+    "axis": {
+      "sections": [
+        {
+          "kind": "straight",
+          "length": 10.64
+        },
+        {
+          "kind": "turn",
+          "direction": "right",
+          "angle_deg": 53.5,
+          "radius": 5.397583714877287
+        },
+        {
+          "kind": "straight",
+          "length": 10.64
+        },
+        {
+          "kind": "turn",
+          "direction": "up",
+          "angle_deg": 48.199999999999996,
+          "radius": 5.991093957384541
+        },
+        {
+          "kind": "straight",
+          "length": 10.64
+        }
+      ]
+    },
+    "dimensions": {
+      "radial_samples": 64,
+      "longitudinal_samples": 128,
+      "base_radius": 2.4,
+      "min_radius": 0.95,
+      "shell_thickness": 0.25
+    },
+    "surface": {
+      "bump_count": 65,
+      "bump_amp_min": 0.04,
+      "bump_amp_max": 0.35,
+      "bump_sigma_long": 0.055,
+      "bump_sigma_theta": 0.06
+    },
+    "camera": {
+      "offset_ratio": 0.1,
+      "wobble_ratio": 0.08,
+      "wobble_hz": 0.45,
+      "lookahead_distance": 2.4
+    },
+    "deformation": {
+      "flow_mode": "cyclic",
+      "flow_cycles": 1.0,
+      "localized_tint_enabled": true,
+      "localized_tint_bgr": [
+        180,
+        70,
+        200
+      ],
+      "localized_tint_strength": 0.32,
+      "areas": [
+        {
+          "id": "area_1",
+          "enabled": true,
+          "center_s": 0.5,
+          "center_theta": 0.18,
+          "sigma_s": 0.3,
+          "sigma_theta": 0.22,
+          "direction": {
+            "radial": 1.0,
+            "tangent": 0.0,
+            "circumferential": 0.0
+          },
+          "amplitude_out": 0.23249999999999998,
+          "amplitude_in": 0.23249999999999998,
+          "frequency_hz": 0.2,
+          "phase_rad": 0.0,
+          "mode": "radial",
+          "spatial_cycles_s": 0.0,
+          "spatial_cycles_theta": 0.0,
+          "flow_dir_s": 0.0,
+          "flow_dir_theta": 0.0
+        }
+      ]
+    }
+  }
+}

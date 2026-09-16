@@ -1,0 +1,47 @@
+name: Validate
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Python backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          enable-cache: true
+      - name: Set up the locked environment
+        run: uv sync --project backend --locked
+      - name: Run tests
+        run: backend/.venv/bin/python -m pytest -q
+
+  browser:
+    name: Browser workspace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm --prefix frontend ci
+      - name: Lint
+        run: npm --prefix frontend run lint
+      - name: Test
+        run: npm --prefix frontend test
+      - name: Build
+        run: npm --prefix frontend run build

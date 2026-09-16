@@ -1,0 +1,8 @@
+# Optional component-pilot runtime. Tested with CPython 3.12.13 on Linux x86_64.
+# Install in a separate environment; the sealed baseline producer is unchanged.
+numpy==2.4.4
+scipy==1.17.1
+opencv-python==4.13.0.92
+mitsuba==3.9.1
+drjit==1.5.0
+pytest==9.1.1
