@@ -1,0 +1,18 @@
+{
+  "schema": "tubular_appearance_spec_v1",
+  "families": [
+    {"family": "f01", "package": "v2", "split": "development"},
+    {"family": "f04", "package": "v11", "split": "validation"},
+    {"family": "f05", "package": "v14", "split": "final_test"},
+    {"family": "f06", "package": "v17", "split": "final_test"}
+  ],
+  "frame_count": 90,
+  "resolution_divisor": 1,
+  "median_radius_meter": 0.015,
+  "samples_per_pixel": 256,
+  "threads": 8,
+  "seed": 20260911,
+  "seed_rule": "base seed plus source frame, shared across matched conditions",
+  "wall_cap_seconds": 21600,
+  "storage_cap_bytes": 17179869184
+}

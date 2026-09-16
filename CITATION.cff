@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use LumenMorph, please cite this software and the accompanying dataset paper when it becomes available."
+title: "LumenMorph"
+version: "1.0.0"
+date-released: 2026-09-16
+type: software
+authors:
+  - family-names: "Cirauqui-Viloria"
+    given-names: "Íñigo"
+repository-code: "https://github.com/icirauqui/LumenMorph"
+license: "MIT"
+abstract: "A deterministic generator and local control surface for synthetic deformable tubular endoscopic sequences with geometric, kinematic, and mechanical annotations."

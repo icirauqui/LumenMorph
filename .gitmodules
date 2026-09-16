@@ -1,0 +1,3 @@
+[submodule "continuum-fem"]
+	path = continuum-fem
+	url = https://github.com/icirauqui/continuum-fem.git

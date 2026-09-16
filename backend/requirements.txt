@@ -1,0 +1,11 @@
+numpy
+scipy
+opencv-python
+pytest
+tqdm
+fastapi
+uvicorn
+websockets
+wsproto
+pydantic
+httpx
