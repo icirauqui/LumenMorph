@@ -6,16 +6,17 @@ R_wc maps camera to world; t_wc is the camera center. Pixel samples are
 Normals are unit world-space face normals following mesh winding, not a
 view-dependent shading normal. No ground truth is an inference observation.
 
-The rasterizer deliberately inherits the renderer's near-plane rule: a triangle
-with any vertex at z <= 1e-5 is discarded rather than clipped. Missing samples
-are invalid and must never be interpreted as zero depth or zero deformation.
+Triangles crossing camera z=1e-5 are clipped while retaining their original
+triangle ID and material barycentrics. Missing samples are invalid and must
+never be interpreted as zero depth or zero deformation.
 """
 from __future__ import annotations
 
 import numpy as np
 from scipy.spatial import cKDTree
 
-from .renderer import _camera_projection, perspective_correct_barycentric, rasterize_mesh_buffers
+from .renderer import (_camera_projection, _projected_triangles,
+                       perspective_correct_barycentric, rasterize_mesh_buffers)
 from .types import CameraIntrinsics
 
 
@@ -57,8 +58,13 @@ def render_rgb_and_truth(
     vertices_cam, _, _ = _camera_projection(vertices_world, intr, R_wc, t_wc,
                                            high_precision=high_precision)
     bary = np.full((*valid.shape, 3), np.nan, dtype=np.float32)
-    bary[valid] = perspective_correct_barycentric(
-        buffers.screen_barycentric[valid], vertices_cam[face_vertices, 2]
+    clipped = np.zeros_like(valid)
+    if buffers.clipped_material_barycentric is not None:
+        clipped = valid & np.all(np.isfinite(buffers.clipped_material_barycentric), axis=-1)
+        bary[clipped] = buffers.clipped_material_barycentric[clipped].astype(np.float32)
+    ordinary = valid & ~clipped
+    bary[ordinary] = perspective_correct_barycentric(
+        buffers.screen_barycentric[ordinary], vertices_cam[triangles[buffers.triangle_index[ordinary]], 2]
     ).astype(np.float32)
     # Both RGB and all evaluator fields use these same stored material weights.
     triangle_uv = np.asarray(uv_vertices)[face_vertices].copy()
@@ -122,11 +128,9 @@ def query_surface_depth(
     query_tree = cKDTree(uv)
     pc, projected, front = _camera_projection(vertices_world, intr, R_wc, t_wc,
                                              high_precision=high_precision)
-    for tri in np.asarray(triangles):
-        z = pc[tri, 2].astype(np.float64)
-        if not np.all(front[tri]) or np.min(z) <= 1e-5:
-            continue
-        p = projected[tri].astype(np.float64)
+    for _, tri, camera, p, _ in _projected_triangles(pc, np.asarray(triangles), intr, projected):
+        z = camera[:, 2].astype(np.float64)
+        p = p.astype(np.float64)
         lo, hi = np.min(p, axis=0), np.max(p, axis=0)
         center = (lo + hi) / 2
         radius = float(np.linalg.norm(hi - lo) / 2) + 1e-9
@@ -175,7 +179,7 @@ def flow_to_frame(
     means a finite positive-depth projection, not visibility. ``visible`` also
     requires image bounds and agreement with continuous target surface depth.
     ``unresolved`` records in-image endpoints not consistent with the rendered
-    target surface (e.g. a discarded near-plane triangle); these are not called
+    target surface (e.g. numerical disagreement); these are not called
     occlusions. ``depth_atol`` is in mesh units; ``depth_rtol`` is dimensionless.
     Use ``high_precision=True`` when source truth was rendered with that mode;
     it applies float64 camera arithmetic both to endpoints and visibility rays.

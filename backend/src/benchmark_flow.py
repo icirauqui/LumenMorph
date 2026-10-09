@@ -21,6 +21,33 @@ FARNEBACK = dict(pyr_scale=.5, levels=3, winsize=15, iterations=3,
 STRATA = ('visible', 'occluded', 'out_of_frame')
 
 
+def development_packages(root):
+    """Resolve the fixed study semantically, independent of package numbering.
+
+    Inspect no reserved descriptor/content: eligibility comes from the public
+    index, then each selected package must independently agree with that index.
+    """
+    root = Path(root)
+    index = json.loads((root / 'SUITE_INDEX.json').read_text())
+    entries = [p for p in index['packages'] if p['split'] == 'development']
+    expected = {(family, condition) for family in ('f01', 'f02', 'f03')
+                for condition in ('static', 'fem', 'nonfem')}
+    identities = [(p['family'], p['condition']) for p in entries]
+    if len(identities) != len(expected) or set(identities) != expected:
+        raise ValueError('Expected exactly three development families/conditions')
+    selected = []
+    for entry in sorted(entries, key=lambda p: p['version']):
+        version = int(entry['version'])
+        if entry['path'] != f'v{version}':
+            raise ValueError('Package path/version disagree')
+        package = root / entry['path']
+        descriptor = json.loads((package / 'DATASET.json').read_text())
+        if any(descriptor[k] != entry[k] for k in ('family', 'condition', 'split')):
+            raise ValueError('Package descriptor/index study identity mismatch')
+        selected.append((version, package, descriptor))
+    return selected
+
+
 def digest(path):
     h = hashlib.sha256()
     with Path(path).open('rb') as f:
@@ -67,11 +94,7 @@ def run(root, output, protocol):
     cv2.setNumThreads(1)
     cv2.setRNGSeed(0)
     jobs, inputs = [], {}
-    for version in range(3, 12):
-        package = root / f'v{version}'
-        descriptor = json.loads((package / 'DATASET.json').read_text())
-        if descriptor['split'] != 'development':
-            raise ValueError('This protocol is restricted to development packages')
+    for version, package, descriptor in development_packages(root):
         inputs[f'v{version}/DATASET.json'] = digest(package / 'DATASET.json')
         for stream in ('moving', 'stationary'):
             for frame in SOURCE_FRAMES:
@@ -88,6 +111,7 @@ def run(root, output, protocol):
                'VariationalRefinementIterations')
     frozen = {'schema': 'tubular_flow_study_v1', 'protocol_sha256': digest(protocol),
               'runner_sha256': digest(__file__), 'suite_seal_sha256': digest(root / 'SUITE_CHECKSUMS.json'),
+              'suite_index_sha256': digest(root / 'SUITE_INDEX.json'),
               'python': platform.python_version(), 'numpy': np.__version__, 'opencv': cv2.__version__,
               'opencv_build': cv2.getBuildInformation(), 'threads': 1, 'rng_seed': 0,
               'farneback': FARNEBACK, 'dis_preset': 'MEDIUM',

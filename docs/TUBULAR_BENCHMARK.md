@@ -161,10 +161,12 @@ Barycentrics are physical surface weights, not affine image-space weights.
 Background has `valid=false`, triangle `-1`, and NaN depth/weights/normals. Always
 mask it before numeric use.
 
-The renderer discards an entire triangle if any camera-space vertex has z <=
-1e-5; it does not clip polygons against the near plane. Independent ray QA must
-detect any consequential coverage holes. This limitation is part of the recorded
-renderer contract, not an assumption that every scene is safe from clipping.
+The current renderer clips polygons against camera z=1e-5, keeping original
+triangle IDs and material barycentrics through the generated clip vertices.
+RGB, dense truth and continuous surface queries share this geometry rule.
+The source archived with the existing sealed bank used whole-triangle discard
+instead; its stored conventions and data retain that historical identity.
+Never overwrite a sealed dataset with outputs from a newer renderer.
 
 ## Flow and visibility
 
@@ -181,7 +183,8 @@ For a source-valid pixel, the following categories are mutually exclusive:
 - `out_of_frame`: target projection lies outside image bounds;
 - `behind_camera`: no finite positive-depth projection;
 - `unresolved`: inside-image projection inconsistent with rendered target
-  geometry, including possible whole-triangle near-plane discard.
+  geometry (including the historical whole-triangle discard when using the
+  source archived with the sealed bank).
 
 Visibility uses a continuous target z-buffer evaluated at actual advected
 subpixel endpoints. It does not round to the nearest target depth pixel.

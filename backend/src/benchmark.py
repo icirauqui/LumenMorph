@@ -289,7 +289,7 @@ def render(root,family_id,condition,stream):
         'units':'abstract length units, no millimetre/tissue claim; depth is camera z, not ray distance',
         'state':'vertices are exact float32 raster inputs; displacement is float64 difference from float32 reference',
         'normal':'world-space triangle winding; no camera-facing reorientation','flow':'forward projected same material triangle/barycentric; final frame absent by definition',
-        'clipping':'whole triangle discarded if any camera vertex depth <=1e-5; no polygon near clipping',
+        'clipping':'camera-space polygon clipping at z=1e-5, preserving original triangle IDs and material barycentrics',
         'background':'valid=false; triangle=-1; invalid entries must be masked',
         'truth_excluded_from_inference':True})
     seal(out);seal(truth)

@@ -355,3 +355,15 @@ Run tests:
 ```bash
 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 backend/.venv/bin/python -m pytest -q
 ```
+
+Create the environment on the current machine; copied Linux virtualenv paths
+cannot run on macOS. Tests for the optional appearance renderer require its
+Mitsuba/DrJit dependencies and an available LLVM shared library. If LLVM is not
+discoverable, set `DRJIT_LIBLLVM_PATH` to the installed library; set
+`DRJIT_CACHE_DIR` to a writable cache directory. The author-review qualification
+used Mitsuba 3.9.1, DrJit 1.5.0 and LLVM 20.1.8 on macOS/aarch64. Missing optional
+dependencies must be reported as omitted coverage, not a complete test pass.
+
+The current CPU rasterizer clips near-plane crossing triangles while retaining
+original material identity. The original sealed bank and its producer archive
+remain unchanged; consult their conventions when replaying historical bytes.

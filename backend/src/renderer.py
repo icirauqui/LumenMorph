@@ -24,6 +24,9 @@ class MeshRasterBuffers:
     depth: np.ndarray
     triangle_index: np.ndarray
     screen_barycentric: np.ndarray
+    # Original material coordinates for near-clipped pixels. Screen weights
+    # cannot identify an original vertex lying on/behind the projection plane.
+    clipped_material_barycentric: np.ndarray | None = None
 
 
 def _camera_oriented_vertex_normals(pts_cam: np.ndarray, triangles: np.ndarray) -> np.ndarray:
@@ -161,6 +164,57 @@ def _camera_projection(vertices_world, intr, R_wc, t_wc, *, high_precision=False
     return pts_cam, uv, valid
 
 
+def _projected_triangles(pts_cam, triangles, intr, uv_pix):
+    """Clip in camera space while retaining the original material identity.
+
+    Unclipped triangles use the existing coordinates and arithmetic unchanged.
+    For a clipped polygon, each generated vertex carries barycentrics on the
+    original face; fan triangulation never creates a new material face ID.
+    """
+    near = 1e-5
+    for triangle_id, tri in enumerate(triangles):
+        camera = pts_cam[tri]
+        if not np.all(np.isfinite(camera)):
+            raise ValueError("Triangle camera coordinates must be finite")
+        if np.min(camera[:, 2]) > near:
+            yield triangle_id, tri, camera, uv_pix[tri], None
+            continue
+        if np.max(camera[:, 2]) < near:
+            continue
+        polygon = list(zip(camera.astype(np.float64), np.eye(3)))
+        clipped = []
+        previous, previous_bary = polygon[-1]
+        previous_inside = previous[2] >= near
+        for current, current_bary in polygon:
+            current_inside = current[2] >= near
+            if current_inside != previous_inside:
+                fraction = (near - previous[2]) / (current[2] - previous[2])
+                point = previous + fraction * (current - previous)
+                point[2] = near
+                material = previous_bary + fraction * (current_bary - previous_bary)
+                clipped.append((point, material))
+            if current_inside:
+                clipped.append((current, current_bary))
+            previous, previous_bary = current, current_bary
+            previous_inside = current_inside
+        for index in range(1, len(clipped) - 1):
+            selected = [clipped[0], clipped[index], clipped[index + 1]]
+            points = np.array([x[0] for x in selected])
+            material = np.array([x[1] for x in selected])
+            projected = np.column_stack((
+                intr.fx * points[:, 0] / points[:, 2] + intr.cx,
+                intr.cy - intr.fy * points[:, 1] / points[:, 2],
+            ))
+            yield triangle_id, tri, points, projected, material
+
+
+def _original_material_grid(p0, p1, p2, clip_material):
+    if clip_material is None:
+        return p0, p1, p2
+    weights = np.stack((p0, p1, p2), axis=-1) @ clip_material
+    return weights[..., 0], weights[..., 1], weights[..., 2]
+
+
 def rasterize_mesh_buffers(
     vertices_world: np.ndarray,
     triangles: np.ndarray,
@@ -177,7 +231,9 @@ def rasterize_mesh_buffers(
     affine by default, preserving audits of historical images. Explicitly set
     ``perspective_correct=True`` for the current :func:`render_mesh` convention:
     reciprocal-interpolated camera z and ray-consistent triangle ownership.
-    Returned screen barycentrics remain affine in both modes.
+    Crossing triangles are clipped at camera z=1e-5. Screen barycentrics are
+    affine on the rasterized subtriangle; clipped pixels additionally carry
+    original-face material coordinates in ``clipped_material_barycentric``.
     ``high_precision=True`` computes camera coordinates, projected vertices,
     screen weights, perspective correction, and z-buffer comparisons in float64.
     Defaults preserve the historical float32 arithmetic and output types.
@@ -189,22 +245,16 @@ def rasterize_mesh_buffers(
     z_buffer = np.full((h, w), np.inf, dtype=dtype)
     triangle_index = np.full((h, w), -1, dtype=np.int32)
     barycentric = np.full((h, w, 3), np.nan, dtype=dtype)
+    clipped_material = None
 
     pts_cam, uv_pix, valid = _camera_projection(vertices_world, intr, R_wc, t_wc,
                                                high_precision=high_precision)
 
-    for triangle_id, tri in enumerate(triangles):
-        i0, i1, i2 = int(tri[0]), int(tri[1]), int(tri[2])
-        if not (valid[i0] and valid[i1] and valid[i2]):
-            continue
-
-        z0, z1, z2 = float(pts_cam[i0, 2]), float(pts_cam[i1, 2]), float(pts_cam[i2, 2])
-        if min(z0, z1, z2) <= 1e-5:
-            continue
-
-        x0, y0 = float(uv_pix[i0, 0]), float(uv_pix[i0, 1])
-        x1, y1 = float(uv_pix[i1, 0]), float(uv_pix[i1, 1])
-        x2, y2 = float(uv_pix[i2, 0]), float(uv_pix[i2, 1])
+    for triangle_id, tri, camera, projected, clip_basis in _projected_triangles(
+        pts_cam, triangles, intr, uv_pix
+    ):
+        z0, z1, z2 = map(float, camera[:, 2])
+        (x0, y0), (x1, y1), (x2, y2) = [(float(x), float(y)) for x, y in projected]
         min_x = max(int(np.floor(min(x0, x1, x2))), 0)
         max_x = min(int(np.ceil(max(x0, x1, x2))), w - 1)
         min_y = max(int(np.floor(min(y0, y1, y2))), 0)
@@ -212,11 +262,12 @@ def rasterize_mesh_buffers(
         if min_x > max_x or min_y > max_y:
             continue
 
-        xs = np.arange(min_x, max_x + 1, dtype=dtype) + 0.5
-        ys = np.arange(min_y, max_y + 1, dtype=dtype) + 0.5
+        raster_dtype = np.float64 if clip_basis is not None else dtype
+        xs = np.arange(min_x, max_x + 1, dtype=raster_dtype) + 0.5
+        ys = np.arange(min_y, max_y + 1, dtype=raster_dtype) + 0.5
         px, py = np.meshgrid(xs, ys)
         w0, w1, w2, inside = _barycentric_grid(px, py, x0, y0, x1, y1, x2, y2,
-                                             high_precision=high_precision)
+                                             high_precision=high_precision or clip_basis is not None)
         if not np.any(inside):
             continue
         if perspective_correct:
@@ -236,11 +287,23 @@ def rasterize_mesh_buffers(
         patch_bary[depth_mask] = np.stack(
             (w0[depth_mask], w1[depth_mask], w2[depth_mask]), axis=1
         )
+        if clip_basis is not None:
+            if clipped_material is None:
+                clipped_material = np.full((h, w, 3), np.nan, dtype=dtype)
+            physical = perspective_correct_barycentric(
+                np.stack((w0[depth_mask], w1[depth_mask], w2[depth_mask]), axis=1),
+                camera[:, 2],
+            ) @ clip_basis
+            clipped_material[min_y:max_y + 1, min_x:max_x + 1][depth_mask] = physical
+        elif clipped_material is not None:
+            # A nearer unclipped face must erase a previous clipped identity.
+            clipped_material[min_y:max_y + 1, min_x:max_x + 1][depth_mask] = np.nan
 
     return MeshRasterBuffers(
         depth=z_buffer,
         triangle_index=triangle_index,
         screen_barycentric=barycentric,
+        clipped_material_barycentric=clipped_material,
     )
 
 
@@ -283,18 +346,12 @@ def render_mesh(
         flat_color_u8 = texture_bgr[0, 0].astype(np.uint8)
         flat_color = flat_color_u8.astype(np.float32).reshape(1, 1, 3)
 
-    for tri in triangles:
+    for _, tri, camera, projected, clip_basis in _projected_triangles(
+        pts_cam, triangles, intr, uv_pix
+    ):
         i0, i1, i2 = int(tri[0]), int(tri[1]), int(tri[2])
-        if not (valid[i0] and valid[i1] and valid[i2]):
-            continue
-
-        z0, z1, z2 = float(pts_cam[i0, 2]), float(pts_cam[i1, 2]), float(pts_cam[i2, 2])
-        if min(z0, z1, z2) <= 1e-5:
-            continue
-
-        x0, y0 = float(uv_pix[i0, 0]), float(uv_pix[i0, 1])
-        x1, y1 = float(uv_pix[i1, 0]), float(uv_pix[i1, 1])
-        x2, y2 = float(uv_pix[i2, 0]), float(uv_pix[i2, 1])
+        z0, z1, z2 = map(float, camera[:, 2])
+        (x0, y0), (x1, y1), (x2, y2) = [(float(x), float(y)) for x, y in projected]
 
         min_x = max(int(np.floor(min(x0, x1, x2))), 0)
         max_x = min(int(np.ceil(max(x0, x1, x2))), w - 1)
@@ -304,17 +361,22 @@ def render_mesh(
         if min_x > max_x or min_y > max_y:
             continue
 
-        xs = np.arange(min_x, max_x + 1, dtype=np.float32) + 0.5
-        ys = np.arange(min_y, max_y + 1, dtype=np.float32) + 0.5
+        raster_dtype = np.float64 if clip_basis is not None else np.float32
+        xs = np.arange(min_x, max_x + 1, dtype=raster_dtype) + 0.5
+        ys = np.arange(min_y, max_y + 1, dtype=raster_dtype) + 0.5
         px, py = np.meshgrid(xs, ys)
 
-        w0, w1, w2, inside = _barycentric_grid(px, py, x0, y0, x1, y1, x2, y2)
+        w0, w1, w2, inside = _barycentric_grid(
+            px, py, x0, y0, x1, y1, x2, y2,
+            high_precision=clip_basis is not None,
+        )
         if not np.any(inside):
             continue
 
         p0, p1, p2, depth = _perspective_correct_grid(
-            w0, w1, w2, z0, z1, z2
+            w0, w1, w2, z0, z1, z2, high_precision=clip_basis is not None
         )
+        p0, p1, p2 = _original_material_grid(p0, p1, p2, clip_basis)
 
         patch_z = z_buffer[min_y : max_y + 1, min_x : max_x + 1]
         depth_mask = inside & (depth < patch_z)

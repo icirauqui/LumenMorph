@@ -116,11 +116,18 @@ def test_continuous_depth_query_matches_ray_away_from_pixel_centers():
     np.testing.assert_allclose(depths, expected, rtol=1e-6)
 
 
-def test_near_plane_discard_is_explicit_and_not_false_depth():
+def test_near_plane_clipping_retains_positive_material_depth():
     vertices = np.array([[-.1, -.1, -1.], [.1, -.1, 2.], [0., .1, 2.]])
     _, truth = render(vertices, np.array([[0, 1, 2]]))
-    assert not np.any(truth["valid"])
-    assert np.all(np.isnan(truth["depth_z"]))
+    valid = truth["valid"]
+    assert np.any(valid)
+    assert np.all(truth["depth_z"][valid] >= 1e-5)
+    bary = truth["material_barycentric"][valid]
+    assert np.all(bary >= 0)
+    np.testing.assert_allclose(bary.sum(axis=1), 1., atol=1e-7)
+    material = bary.astype(float) @ vertices
+    np.testing.assert_allclose(material[:, 2], truth["depth_z"][valid], rtol=2e-6)
+    assert np.all(np.isnan(truth["depth_z"][~valid]))
 
 
 def test_periodic_tube_u_uses_seam_colors_without_changing_material_truth():
