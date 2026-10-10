@@ -15,6 +15,23 @@ simulator or a claim of validated tissue mechanics.
 
 Source code: <https://github.com/icirauqui/LumenMorph>.
 
+Current software release: **1.0.2**,
+[tag `v1.0.2`](https://github.com/icirauqui/LumenMorph/tree/v1.0.2).
+For a pinned checkout with its mechanics dependency:
+
+```bash
+git clone --branch v1.0.2 --recurse-submodules https://github.com/icirauqui/LumenMorph.git
+cd LumenMorph
+```
+
+The published dataset is the **Synthetic Deformable Tubular Benchmark with
+Dense Ground Truth and Mechanical Annotations**, version **1.0.0**:
+[doi:10.57967/hf/10843](https://doi.org/10.57967/hf/10843).
+Software and dataset versions identify separate artifacts. Version 1.0.2
+contains the corrected clipping, dense-truth and benchmark-flow code; the
+released dataset retains its recorded historical producer identities. See
+[CHANGELOG.md](CHANGELOG.md) and [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
+
 ## Documentation
 
 - [Install LumenMorph](docs/INSTALLATION.md) for the supported Python and browser setup.

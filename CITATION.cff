@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use LumenMorph, please cite this software and the accompanying dataset paper when it becomes available."
 title: "LumenMorph"
-version: "1.0.1"
-date-released: 2026-09-16
+version: "1.0.2"
+date-released: 2026-10-10
 type: software
 authors:
   - family-names: "Cirauqui-Viloria"
