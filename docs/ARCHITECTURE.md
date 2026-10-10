@@ -37,7 +37,7 @@ public internet.
 ## Data and truth boundaries
 
 The generic generator writes RGB observations, camera metadata, mesh states,
-and deformation information. The fixed SD Tube benchmark adds a documented
+and deformation information. The fixed Synthetic Deformable Tubular Benchmark adds a documented
 release schema and evaluation protocol. Use the corresponding reader and
 evaluator rather than assuming every generic output has all benchmark fields.
 

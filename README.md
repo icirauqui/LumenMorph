@@ -8,7 +8,7 @@ observations together with dense geometric, kinematic and mechanical
 annotations, so reconstruction and deformation-analysis methods can be tested
 against known conditions.
 
-Its public SD Tube resource is designed for deformable 3D reconstruction,
+The Synthetic Deformable Tubular Benchmark is designed for deformable 3D reconstruction,
 global/local reconstruction workflows, correspondence and optical-flow
 evaluation, and controlled appearance-robustness studies. It is not a clinical
 simulator or a claim of validated tissue mechanics.
@@ -27,6 +27,8 @@ cd LumenMorph
 The published dataset is the **Synthetic Deformable Tubular Benchmark with
 Dense Ground Truth and Mechanical Annotations**, version **1.0.0**:
 [doi:10.57967/hf/10843](https://doi.org/10.57967/hf/10843).
+[Dataset repository](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark) ·
+[Reproducibility material](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark-reproducibility).
 Software and dataset versions identify separate artifacts. Version 1.0.2
 contains the corrected clipping, dense-truth and benchmark-flow code; the
 released dataset retains its recorded historical producer identities. See
@@ -121,7 +123,7 @@ backend/.venv/bin/python -m backend.src.benchmark --help
 LumenMorph and its accompanying documentation are licensed under
 [MIT](LICENSE), as approved by the copyright holder on 2026-09-11.
 The separately maintained `ContinuumFEM` submodule is also MIT-licensed.
-Other dependencies retain their own licenses. Generated SD Tube benchmark data
+Other dependencies retain their own licenses. Generated benchmark data
 are separately licensed under CC BY 4.0; distribute the benchmark's
 accompanying data-license notice and preserve third-party source/binary notices.
 

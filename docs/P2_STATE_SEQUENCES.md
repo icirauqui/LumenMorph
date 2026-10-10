@@ -10,4 +10,4 @@ Keep reference material XYZ fixed across states when passing `material_reference
 
 For temporal response, record image timestamps independently from load factors. Propagate `next_log_gain` with the actual elapsed time. An accepted equilibrium state is not a time-integrated dynamic state. Background-dominated median metering can clamp gain and saturate visible surfaces; retain this failure rather than tuning a camera to make integration appear successful.
 
-A workspace development fixture is documented in `docs/research/artifacts/sdtube_extension_20260911/NONLINEAR_SEQUENCE_PROTOCOL.md` and `NONLINEAR_SEQUENCE_REVIEW.md`. It refers to the original isotropic/HGO state archives and a single shared P2 mapping without duplicating mesh histories. Those states are volume-inaccurate and underresolved; successful material transport is not mechanics or clinical validation.
+A retained development fixture uses the original isotropic/HGO state archives and a single shared P2 mapping without duplicating mesh histories. Those states are volume-inaccurate and underresolved; successful material transport is not mechanics or clinical validation.
