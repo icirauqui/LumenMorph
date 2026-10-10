@@ -26,9 +26,12 @@ cd LumenMorph
 
 The published dataset is the **Synthetic Deformable Tubular Benchmark with
 Dense Ground Truth and Mechanical Annotations**, version **1.0.0**:
-[doi:10.57967/hf/10843](https://doi.org/10.57967/hf/10843).
+[doi:10.57967/hf/10850](https://doi.org/10.57967/hf/10850).
 [Dataset repository](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark) ·
 [Reproducibility material](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark-reproducibility).
+The dataset DOI fixes public naming edition `v1.0.1` (scientific version 1.0.0).
+Reproducibility material `v1.1.0` has its own
+[doi:10.57967/hf/10851](https://doi.org/10.57967/hf/10851).
 Software and dataset versions identify separate artifacts. Version 1.0.2
 contains the corrected clipping, dense-truth and benchmark-flow code; the
 released dataset retains its recorded historical producer identities. See
