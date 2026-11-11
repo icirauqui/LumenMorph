@@ -63,3 +63,18 @@ def test_accelerated_independent_rays_against_analytic_geometry():
     ids,z,b=rays(v,np.array([[0,1,2],[3,4,5]]),np.zeros(3),np.array([[0.,0.,1.],[3.,0.,1.]]))
     assert ids.tolist()==[0,-1] and z[0]==2 and np.isinf(z[1])
     assert np.allclose(b[0],[.25,.25,.5])
+
+
+def test_colon_sigmoid_turns_inward_after_descending_segment():
+    f=next(row for row in json.loads(SPEC.read_text())['families'] if row['id']=='f07')
+    cfg=load_config_dict(f['generator_config'])
+    g=geometry(cfg.tube,cfg.difficulty_presets['colon_benchmark'],np.random.default_rng(cfg.seed),f['collection_geometry'])
+    sections=f['generator_config']['tube']['axis']['sections']
+    lengths=np.array([row['length'] if row['kind']=='straight' else np.deg2rad(row['angle_deg'])*row['radius'] for row in sections])
+    boundaries=np.r_[0,np.cumsum(lengths)]
+    start=next(i for i,row in enumerate(sections) if row['region']=='sigmoid_1')
+    samples=np.linspace(0,boundaries[-1],len(g.centerline))
+    a,b=[g.centerline[np.argmin(abs(samples-boundaries[i]))] for i in [start,start+1]]
+    assert b[0]<a[0]-3  # Medial turn in the x/y layout, not an outward loop.
+    assert g.centerline[-1,0]<a[0]-2
+    assert g.centerline[-1,1]<b[1]-15

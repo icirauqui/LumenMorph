@@ -149,7 +149,7 @@
               },
               {
                 "kind": "turn",
-                "direction": "left",
+                "direction": "right",
                 "angle_deg": 65,
                 "radius": 10,
                 "region": "sigmoid_1"
@@ -163,14 +163,14 @@
               },
               {
                 "kind": "turn",
-                "direction": "right",
+                "direction": "left",
                 "angle_deg": 100,
                 "radius": 10,
                 "region": "sigmoid_2"
               },
               {
                 "kind": "turn",
-                "direction": "left",
+                "direction": "right",
                 "angle_deg": 35,
                 "radius": 12,
                 "region": "rectal_transition"

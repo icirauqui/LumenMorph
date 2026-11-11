@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.1 — 2026-11-11
+
+- Direct the colon-layout family's sigmoid toward the medial side after the
+  descending segment, preserving the three-dimensional bends and acquisition
+  parameterization. Add a centerline regression check for the intended layout.
+- The six established family specifications, procedural textures and reader
+  contracts remain unchanged. External textures are configured only for f07/f08.
+
 ## 2.0.0 — 2026-11-11
 
 - Configurable long 3D centerlines, smooth radius profiles, parallel-transport

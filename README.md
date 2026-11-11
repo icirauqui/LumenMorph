@@ -15,13 +15,13 @@ simulator or a claim of validated tissue mechanics.
 
 Source code: <https://github.com/icirauqui/LumenMorph>.
 
-Software version **2.0.0** provides generation, RGB readers, material queries,
+Software version **2.0.1** provides generation, RGB readers, material queries,
 evaluation and independent validation for the collection of eight seeded families.
 The resource includes paired cameras and motion conditions, matched procedural
 and file textures, and five path-traced appearance conditions on four families.
 
 ```bash
-git clone --branch v2.0.0 --recurse-submodules https://github.com/icirauqui/LumenMorph.git
+git clone --branch v2.0.1 --recurse-submodules https://github.com/icirauqui/LumenMorph.git
 cd LumenMorph
 python3 -m venv .venv
 .venv/bin/python -m pip install -r backend/requirements-collection.txt
