@@ -1,0 +1,11 @@
+{
+  "creator": "TextureCan",
+  "asset": "Others 0001",
+  "source": "https://www.texturecan.com/details/137/",
+  "download": "https://www.texturecan.com/downloads/others_0001/others_0001_1k_HAt2xb.zip",
+  "license": "CC0-1.0",
+  "license_url": "https://www.texturecan.com/terms/",
+  "original_archive_sha256": "cac0140b215bd28fb1987a9a79ca1c9b99e22dc578fc3bdf23630f04d760a4e6",
+  "file_sha256": "33c86b78de2a4766f6f5fbce70871891ac870c73e9b454db398eacd23051b015",
+  "interpretation": "Procedural stylized organic color texture; not measured tissue reflectance. Only color map used; no normal, roughness, height or AO maps applied."
+}

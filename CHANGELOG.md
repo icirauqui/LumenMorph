@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.0 — 2026-11-11
+
+- Configurable long 3D centerlines, smooth radius profiles, parallel-transport
+  frames, camera sampling, spatial basis counts and raised-cosine schedules.
+- Hash-identified external material textures with periodic linear-light sampling;
+  paired texture images share each acquisition's geometry, poses and truth.
+- Explicit RGB collection/individual readers preserving historical rgb() contracts.
+- Appearance dense scoring and one-component global Sim(3) material-track scoring.
+- Analytic C3D6 checks, statewise surface/camera checks, stratified independent-ray
+  validation, FE transfer checks and representative producer replay.
+- Versioned collection configurations, CC0 texture provenance, examples and
+  numerical environment pins. Existing published inputs remain immutable.
+
 ## 1.0.2 — 2026-10-10
 
 - Tag the corrected code already present on `main`: material-preserving

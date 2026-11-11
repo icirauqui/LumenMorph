@@ -37,6 +37,11 @@ class AppearancePublic:
         return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 
+    def image_rgb(self, frame, condition='diffuse_symmetric'):
+        """Explicit uint8 RGB API, consistent with baseline image_rgb()."""
+        return self.rgb(frame, condition)
+
+
 class AppearanceEvaluation(AppearancePublic):
     """Privileged geometry, original material identity and renderer-specific truth.
 

@@ -72,17 +72,17 @@ the declared scene units and receives no truth-based rescaling.
 
 ```sh
 backend/.venv/bin/python -m backend.src.benchmark_evaluate \
-  --package ../../datasets/generated/tubular_benchmark_v1/v2 \
+  --package "$SDTUBE_DATA/benchmark/v2" \
   --task flow --frame 52 --stream moving \
   --predictions /tmp/my_flow.npz \
-  --output ../../experiments/artifacts/my_run/flow_52.json
+  --output ./my_run/flow_52.json
 
 backend/.venv/bin/python -m backend.src.benchmark_evaluate \
-  --package ../../datasets/generated/tubular_benchmark_v1/v2 \
+  --package "$SDTUBE_DATA/benchmark/v2" \
   --task displacement --frame 0 --target 67 --stream stationary \
   --coordinate-frame benchmark-world \
   --predictions /tmp/my_displacement.npz \
-  --output ../../experiments/artifacts/my_run/displacement_0_67.json
+  --output ./my_run/displacement_0_67.json
 ```
 
 Use `--task depth` without a target, or `--task normals` with the world-frame
@@ -104,3 +104,95 @@ with filesystem access can read evaluator assets. Good benchmark use depends
 on declaring privileged information honestly and preserving split exposure.
 Finite scores validate a submitted array against this synthetic task; they do
 not certify clinical performance or tissue-model validity.
+
+## Appearance scoring
+
+`backend.src.appearance_evaluate` accepts the same `prediction`/optional `mask`
+NPZ format. Its tasks are `depth`, `normals`, `displacement` and
+`projected_flow`. Depth and displacement errors are in metres; normals use the
+appearance-world axes and oriented angular error. Temporal tasks require
+`--target`. Normals and displacement require
+`--coordinate-frame appearance-world-meters`.
+
+```bash
+.venv/bin/python -m backend.src.appearance_evaluate \
+  --family "$SDTUBE_DATA/appearance/families/f01" \
+  --task depth --frame 0 --predictions ./depth.npz --output ./depth_score.json
+```
+
+The primary depth/normal/displacement population is every valid source pixel.
+Projected flow additionally requires positive target depth and an in-image
+projection. **No target-occlusion classification is supplied or inferred** by
+this scorer. All methods share the same eligibility rule; missing predictions
+reduce coverage rather than remove cases. The five path-traced appearance
+conditions share states internally. Comparing them with raster images also
+involves the documented coordinate/rounding conversion and rendering pipeline.
+
+## Globally aligned monocular material tracks
+
+Three evaluation contracts must be distinguished: pixel flow has no 3D scale
+ambiguity; predictions supplied in known benchmark axes/scale use the dense
+scorer directly; free monocular reconstruction needs a declared global gauge.
+`backend.src.monocular_evaluate` implements the third contract for one concrete
+format. It evaluates existing predictions; it does not run SfM or estimate
+material tracks from ground truth.
+
+The prediction NPZ contains:
+
+| Key | Shape | Meaning |
+|---|---|---|
+| `frame_ids` | T integer | Unique requested acquisition frame IDs |
+| `centers` | T×3 | Predicted camera centers in one common prediction world |
+| `rotations` | T×3×3 | Camera-to-prediction-world rotations; camera x right, y up, z forward |
+| `reference_pixels` | N×2 integer | Unique source-image `(row,column)` observations defining tracks |
+| `points` | T×N×3 | Predicted positions of those same material tracks |
+| `mask` | T×N boolean, optional | Available predictions, never the evaluator population |
+| `normals` | T×N×3, optional | Oriented normals in prediction-world axes |
+
+The protocol JSON declares `schema: material_tracks_alignment_v1`, a
+`component_id`, `reference_frame`, the complete requested `frame_ids`, `anchor_frame_ids`, `reference_pixels_sha256` and optionally
+`minimum_second_singular_ratio` (default 1e-6). Choose frames, pixels, anchors,
+algorithm and protocol before inference or inspecting truth. Hash the ordered
+reference `(row,column)` array as C-contiguous little-endian int64 bytes with
+SHA-256; its identity is checked against the protocol. Keep every requested
+frame in the prediction, using nonfinite values and false masks for missing
+outputs; omitting difficult frames is rejected. Freeze both files
+before evaluation; the evaluator hashes and loads them before opening truth.
+
+A public-input helper writes the complete protocol and the ordered observation grid:
+
+```bash
+PYTHONPATH=. .venv/bin/python examples/prepare_monocular_protocol.py \
+  --package "$SDTUBE_DATA/acquisitions/v20" --stream moving \
+  --anchors 0 80 160 239 --output ./protocol_inputs
+```
+
+For example, f07's predeclared action anchors `[0, 80, 160, 239]` sample its
+trajectory. A component with absent anchors, fewer than three noncollinear
+anchors, nonfinite anchor centers or insufficient second/first centered singular
+value ratio fails alignment. It receives a saved failure with zero scored
+coverage; no frame-specific fallback is attempted. Anchor requirements apply
+to both prediction and reference camera centers.
+
+```bash
+.venv/bin/python -m backend.src.monocular_evaluate \
+  --package "$SDTUBE_DATA/acquisitions/v20" --stream moving \
+  --predictions ./tracks.npz --protocol ./protocol.json --output ./aligned_score.json
+```
+
+One least-squares proper positive-scale similarity `s R X + t` aligns the
+predeclared camera anchors. The same transform applies to every point and
+camera center; camera orientations become `R R_camera`, displacements become
+`s R u`, and normals are rotated and normalized. The transform is never fitted
+per frame. Each independently reconstructed component requires its own declared
+submission; separate aligned components are not a joint reconstruction.
+
+The score reports the reference-image sampling fraction separately from track
+coverage. A sparse predeclared cohort does not measure complete surface support.
+
+Outputs explicitly say **ground-truth-aligned** and do not claim recovered
+absolute scale. Camera position/rotation and persistent material position,
+displacement and optional normal error retain coverage and conditional versus
+full-population scores. Every valid reference material observation remains in
+the requested population across target frames, including occlusions. Reference
+background is ineligible. Failed or nonfinite predictions remain missing.

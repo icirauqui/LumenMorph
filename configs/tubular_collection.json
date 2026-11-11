@@ -1,0 +1,922 @@
+{
+  "schema": "synthetic_deformable_tubular_collection_v2",
+  "families": [
+    {
+      "id": "f07",
+      "split": "resource_validation",
+      "generator_config": {
+        "version": "tubular-benchmark-1",
+        "seed": 316085,
+        "scene_type": "tube",
+        "sequence_count": {
+          "train": 1,
+          "val": 0,
+          "test": 0
+        },
+        "default_preset_cycle": [
+          "colon_benchmark"
+        ],
+        "intrinsics": {
+          "width": 640,
+          "height": 480,
+          "fx": 455.0,
+          "fy": 452.0,
+          "cx": 320.0,
+          "cy": 240.0
+        },
+        "sequence": {
+          "num_frames": 240,
+          "fps": 15,
+          "mesh_nx": 24,
+          "mesh_ny": 24,
+          "x_min": -4.0,
+          "x_max": 4.0,
+          "y_min": 0.0,
+          "y_max": 4.0
+        },
+        "camera": {
+          "base_x": 0.0,
+          "base_y": 0.0,
+          "base_z": 0.0,
+          "forward_drift_per_s": 0.0,
+          "orbit_radius": 0.0,
+          "orbit_frequency_hz": 0.0,
+          "lateral_amplitude": 0.0,
+          "lateral_frequency_hz": 0.0,
+          "lookahead_distance": 4.0,
+          "lookat_height": 0.0,
+          "roll_jitter_deg": 0.2,
+          "pitch_jitter_deg": 0.3,
+          "yaw_jitter_deg": 0.3
+        },
+        "texture": {
+          "width": 1536,
+          "height": 1536,
+          "min_orb_features": 500,
+          "max_attempts": 1
+        },
+        "photometric": {
+          "gaussian_sigma": 0.35,
+          "gain_jitter": 0.005
+        },
+        "output": {
+          "write_frames": true,
+          "write_mp4": true,
+          "write_mesh_state": true
+        },
+        "validation": {
+          "min_orb_features_mean": 260.0,
+          "min_orb_features_frame": 100.0,
+          "min_frame_motion": 0.02,
+          "min_camera_clearance": 1.1,
+          "max_abs_mesh_z": 10.0
+        },
+        "difficulty_presets": {
+          "colon_benchmark": {
+            "wave_count": 0,
+            "amp_min": 0.0,
+            "amp_max": 0.0,
+            "freq_min": 0.0,
+            "freq_max": 0.0,
+            "omega_min": 0.0,
+            "omega_max": 0.0,
+            "drift_scale": 1.0,
+            "jitter_scale": 1.0,
+            "curve_scale": 1.0
+          }
+        },
+        "plane": {
+          "landmark_count": 0,
+          "landmark_height_min": 1.8,
+          "landmark_height_max": 4.8,
+          "landmark_sigma_min": 1.0,
+          "landmark_sigma_max": 3.5,
+          "rigid_ratio": 0.0,
+          "rigid_include_landmarks": true,
+          "rigid_edge_softness": 1,
+          "rigid_colorize": false,
+          "rigid_tint_bgr": [
+            40,
+            180,
+            255
+          ],
+          "rigid_tint_strength": 0.35,
+          "flip_vertical_view": false
+        },
+        "tube": {
+          "axis": {
+            "sections": [
+              {
+                "kind": "straight",
+                "length": 8,
+                "region": "cecal_region"
+              },
+              {
+                "kind": "straight",
+                "length": 24,
+                "region": "ascending"
+              },
+              {
+                "kind": "turn",
+                "direction": "right",
+                "angle_deg": 90,
+                "radius": 12,
+                "region": "hepatic_flexure"
+              },
+              {
+                "kind": "straight",
+                "length": 27,
+                "region": "transverse"
+              },
+              {
+                "kind": "turn",
+                "direction": "down",
+                "angle_deg": 18,
+                "radius": 14,
+                "region": "transverse_3d"
+              },
+              {
+                "kind": "turn",
+                "direction": "right",
+                "angle_deg": 90,
+                "radius": 12,
+                "region": "splenic_flexure"
+              },
+              {
+                "kind": "straight",
+                "length": 28,
+                "region": "descending"
+              },
+              {
+                "kind": "turn",
+                "direction": "left",
+                "angle_deg": 65,
+                "radius": 10,
+                "region": "sigmoid_1"
+              },
+              {
+                "kind": "turn",
+                "direction": "up",
+                "angle_deg": 25,
+                "radius": 12,
+                "region": "sigmoid_3d"
+              },
+              {
+                "kind": "turn",
+                "direction": "right",
+                "angle_deg": 100,
+                "radius": 10,
+                "region": "sigmoid_2"
+              },
+              {
+                "kind": "turn",
+                "direction": "left",
+                "angle_deg": 35,
+                "radius": 12,
+                "region": "rectal_transition"
+              },
+              {
+                "kind": "straight",
+                "length": 18,
+                "region": "rectal_region"
+              }
+            ]
+          },
+          "dimensions": {
+            "radial_samples": 48,
+            "longitudinal_samples": 640,
+            "base_radius": 2.5,
+            "min_radius": 1.2,
+            "shell_thickness": 0.4,
+            "cap_ends": true
+          },
+          "surface": {
+            "bump_count": 240,
+            "bump_amp_min": 0.02,
+            "bump_amp_max": 0.08,
+            "bump_sigma_long": 0.012,
+            "bump_sigma_theta": 0.04
+          },
+          "camera": {
+            "offset_ratio": 0.075,
+            "wobble_ratio": 0.035,
+            "wobble_hz": 0.14,
+            "lookahead_distance": 3.6,
+            "end_margin_distance": 17.0
+          },
+          "deformation": {
+            "flow_mode": "cyclic",
+            "flow_cycles": 1.0,
+            "fea": {
+              "young_modulus_pa": 900000.0,
+              "poisson_ratio": 0.28,
+              "axial_elements": 160,
+              "theta_elements": 32,
+              "load_distribution": "gaussian_patch",
+              "load_sigma_cutoff": 3.0
+            },
+            "localized_tint_enabled": false,
+            "localized_tint_bgr": [
+              48,
+              185,
+              255
+            ],
+            "localized_tint_strength": 0.0,
+            "areas": []
+          }
+        }
+      },
+      "reference_frames": 240,
+      "action_frames": 240,
+      "reference_progress": [
+        0.04,
+        0.94,
+        0.52
+      ],
+      "moving_progress": [
+        0.07,
+        0.9
+      ],
+      "camera_offset_ratio": 0.1,
+      "patches": [
+        {
+          "s": 0.15,
+          "theta": 0.1,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.294,
+          "theta": 0.41000000000000003,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            -0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.43799999999999994,
+          "theta": 0.72,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.5820000000000001,
+          "theta": 0.030000000000000027,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            -0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.726,
+          "theta": 0.3400000000000001,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.87,
+          "theta": 0.6500000000000001,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            -0.15,
+            0.3
+          ]
+        }
+      ],
+      "fem_peak_fractions": [
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04
+      ],
+      "nonfem_peak_fractions": [
+        0.065,
+        0.065,
+        0.065,
+        0.065,
+        0.065,
+        0.065
+      ],
+      "amplitude_regime": "distributed_prescribed_motion",
+      "package_base": 19,
+      "collection_geometry": {
+        "frame": "parallel_transport",
+        "radius_profile": [
+          [
+            0,
+            1.1
+          ],
+          [
+            0.12,
+            1.2
+          ],
+          [
+            0.27,
+            0.87
+          ],
+          [
+            0.4,
+            1.04
+          ],
+          [
+            0.53,
+            0.85
+          ],
+          [
+            0.65,
+            1.05
+          ],
+          [
+            0.79,
+            0.78
+          ],
+          [
+            0.9,
+            1.02
+          ],
+          [
+            1,
+            0.95
+          ]
+        ]
+      },
+      "acquisition": {
+        "offset_ratio": 0.1,
+        "lookahead": 3.0,
+        "orbit_cycles": 2.5
+      },
+      "temporal_coefficients": [
+        {
+          "kind": "raised_cosine",
+          "start": 0,
+          "end": 0.3763855421686747,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0,
+          "end": 0.5498795180722892,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.16337349397590356,
+          "end": 0.7233734939759036,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.3368674698795181,
+          "end": 0.8968674698795182,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.5103614457831325,
+          "end": 1,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.6838554216867471,
+          "end": 1,
+          "amplitude": 1.0
+        }
+      ],
+      "file_textures": {
+        "tissue": {
+          "file": "assets/others_0001_color_1k.jpg",
+          "sha256": "33c86b78de2a4766f6f5fbce70871891ac870c73e9b454db398eacd23051b015",
+          "orientation": 0,
+          "repeat": [
+            3,
+            18
+          ],
+          "offset": [
+            0,
+            0
+          ],
+          "interpolation": "bilinear",
+          "color_space": "srgb",
+          "seam": "periodic",
+          "seed": null,
+          "interpretation": "Procedural stylized organic color texture; not measured tissue reflectance. Only color map used; no normal, roughness, height or AO maps applied."
+        }
+      }
+    },
+    {
+      "id": "f08",
+      "split": "resource_validation",
+      "generator_config": {
+        "version": "tubular-benchmark-1",
+        "seed": 317094,
+        "scene_type": "tube",
+        "sequence_count": {
+          "train": 1,
+          "val": 0,
+          "test": 0
+        },
+        "default_preset_cycle": [
+          "colon_benchmark"
+        ],
+        "intrinsics": {
+          "width": 640,
+          "height": 480,
+          "fx": 455.0,
+          "fy": 452.0,
+          "cx": 320.0,
+          "cy": 240.0
+        },
+        "sequence": {
+          "num_frames": 300,
+          "fps": 15,
+          "mesh_nx": 24,
+          "mesh_ny": 24,
+          "x_min": -4.0,
+          "x_max": 4.0,
+          "y_min": 0.0,
+          "y_max": 4.0
+        },
+        "camera": {
+          "base_x": 0.0,
+          "base_y": 0.0,
+          "base_z": 0.0,
+          "forward_drift_per_s": 0.0,
+          "orbit_radius": 0.0,
+          "orbit_frequency_hz": 0.0,
+          "lateral_amplitude": 0.0,
+          "lateral_frequency_hz": 0.0,
+          "lookahead_distance": 4.0,
+          "lookat_height": 0.0,
+          "roll_jitter_deg": 0.2,
+          "pitch_jitter_deg": 0.3,
+          "yaw_jitter_deg": 0.3
+        },
+        "texture": {
+          "width": 1536,
+          "height": 1536,
+          "min_orb_features": 500,
+          "max_attempts": 1
+        },
+        "photometric": {
+          "gaussian_sigma": 0.35,
+          "gain_jitter": 0.005
+        },
+        "output": {
+          "write_frames": true,
+          "write_mp4": true,
+          "write_mesh_state": true
+        },
+        "validation": {
+          "min_orb_features_mean": 260.0,
+          "min_orb_features_frame": 100.0,
+          "min_frame_motion": 0.02,
+          "min_camera_clearance": 1.1,
+          "max_abs_mesh_z": 10.0
+        },
+        "difficulty_presets": {
+          "colon_benchmark": {
+            "wave_count": 0,
+            "amp_min": 0.0,
+            "amp_max": 0.0,
+            "freq_min": 0.0,
+            "freq_max": 0.0,
+            "omega_min": 0.0,
+            "omega_max": 0.0,
+            "drift_scale": 1.0,
+            "jitter_scale": 1.0,
+            "curve_scale": 1.0
+          }
+        },
+        "plane": {
+          "landmark_count": 0,
+          "landmark_height_min": 1.8,
+          "landmark_height_max": 4.8,
+          "landmark_sigma_min": 1.0,
+          "landmark_sigma_max": 3.5,
+          "rigid_ratio": 0.0,
+          "rigid_include_landmarks": true,
+          "rigid_edge_softness": 1,
+          "rigid_colorize": false,
+          "rigid_tint_bgr": [
+            40,
+            180,
+            255
+          ],
+          "rigid_tint_strength": 0.35,
+          "flip_vertical_view": false
+        },
+        "tube": {
+          "axis": {
+            "sections": [
+              {
+                "kind": "straight",
+                "length": 14,
+                "region": "inlet"
+              },
+              {
+                "kind": "turn",
+                "direction": "right",
+                "angle_deg": 80,
+                "radius": 10,
+                "region": "bend_1"
+              },
+              {
+                "kind": "straight",
+                "length": 10,
+                "region": "segment_1"
+              },
+              {
+                "kind": "turn",
+                "direction": "up",
+                "angle_deg": 55,
+                "radius": 12,
+                "region": "bend_2"
+              },
+              {
+                "kind": "straight",
+                "length": 12,
+                "region": "segment_2"
+              },
+              {
+                "kind": "turn",
+                "direction": "left",
+                "angle_deg": 110,
+                "radius": 11,
+                "region": "bend_3"
+              },
+              {
+                "kind": "straight",
+                "length": 10,
+                "region": "segment_3"
+              },
+              {
+                "kind": "turn",
+                "direction": "down",
+                "angle_deg": 75,
+                "radius": 12,
+                "region": "bend_4"
+              },
+              {
+                "kind": "straight",
+                "length": 14,
+                "region": "segment_4"
+              },
+              {
+                "kind": "turn",
+                "direction": "right",
+                "angle_deg": 100,
+                "radius": 10,
+                "region": "bend_5"
+              },
+              {
+                "kind": "straight",
+                "length": 12,
+                "region": "segment_5"
+              },
+              {
+                "kind": "turn",
+                "direction": "up",
+                "angle_deg": 60,
+                "radius": 11,
+                "region": "bend_6"
+              },
+              {
+                "kind": "straight",
+                "length": 18,
+                "region": "outlet"
+              }
+            ]
+          },
+          "dimensions": {
+            "radial_samples": 48,
+            "longitudinal_samples": 768,
+            "base_radius": 2.5,
+            "min_radius": 1.2,
+            "shell_thickness": 0.4,
+            "cap_ends": true
+          },
+          "surface": {
+            "bump_count": 240,
+            "bump_amp_min": 0.02,
+            "bump_amp_max": 0.08,
+            "bump_sigma_long": 0.012,
+            "bump_sigma_theta": 0.04
+          },
+          "camera": {
+            "offset_ratio": 0.075,
+            "wobble_ratio": 0.035,
+            "wobble_hz": 0.14,
+            "lookahead_distance": 3.6,
+            "end_margin_distance": 17.0
+          },
+          "deformation": {
+            "flow_mode": "cyclic",
+            "flow_cycles": 1.0,
+            "fea": {
+              "young_modulus_pa": 900000.0,
+              "poisson_ratio": 0.28,
+              "axial_elements": 192,
+              "theta_elements": 32,
+              "load_distribution": "gaussian_patch",
+              "load_sigma_cutoff": 3.0
+            },
+            "localized_tint_enabled": false,
+            "localized_tint_bgr": [
+              48,
+              185,
+              255
+            ],
+            "localized_tint_strength": 0.0,
+            "areas": []
+          }
+        }
+      },
+      "reference_frames": 300,
+      "action_frames": 300,
+      "reference_progress": [
+        0.04,
+        0.94,
+        0.52
+      ],
+      "moving_progress": [
+        0.07,
+        0.9
+      ],
+      "camera_offset_ratio": 0.1,
+      "patches": [
+        {
+          "s": 0.15,
+          "theta": 0.1,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.25285714285714284,
+          "theta": 0.41000000000000003,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            -0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.3557142857142857,
+          "theta": 0.72,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.45857142857142863,
+          "theta": 0.030000000000000027,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            -0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.5614285714285714,
+          "theta": 0.3400000000000001,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.6642857142857143,
+          "theta": 0.6500000000000001,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            -0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.7671428571428572,
+          "theta": 0.96,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            0.15,
+            0.3
+          ]
+        },
+        {
+          "s": 0.87,
+          "theta": 0.27,
+          "sigma_s": 0.065,
+          "sigma_theta": 0.18,
+          "direction": [
+            -1.0,
+            -0.15,
+            0.3
+          ]
+        }
+      ],
+      "fem_peak_fractions": [
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04,
+        0.04
+      ],
+      "nonfem_peak_fractions": [
+        0.065,
+        0.065,
+        0.065,
+        0.065,
+        0.065,
+        0.065,
+        0.065,
+        0.065
+      ],
+      "amplitude_regime": "distributed_prescribed_motion",
+      "package_base": 22,
+      "collection_geometry": {
+        "frame": "parallel_transport",
+        "radius_profile": [
+          [
+            0,
+            1.1
+          ],
+          [
+            0.12,
+            1.2
+          ],
+          [
+            0.27,
+            0.87
+          ],
+          [
+            0.4,
+            1.04
+          ],
+          [
+            0.53,
+            0.72
+          ],
+          [
+            0.65,
+            1.05
+          ],
+          [
+            0.79,
+            0.78
+          ],
+          [
+            0.9,
+            1.02
+          ],
+          [
+            1,
+            0.95
+          ]
+        ]
+      },
+      "acquisition": {
+        "offset_ratio": 0.1,
+        "lookahead": 3.0,
+        "orbit_cycles": 2.5
+      },
+      "temporal_coefficients": [
+        {
+          "kind": "raised_cosine",
+          "start": 0,
+          "end": 0.3763855421686747,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0,
+          "end": 0.5003098106712565,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.06423407917383817,
+          "end": 0.6242340791738382,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.18815834767642003,
+          "end": 0.7481583476764201,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.3120826161790017,
+          "end": 0.8720826161790017,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.43600688468158355,
+          "end": 0.9960068846815836,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.5599311531841654,
+          "end": 1,
+          "amplitude": 1.0
+        },
+        {
+          "kind": "raised_cosine",
+          "start": 0.6838554216867471,
+          "end": 1,
+          "amplitude": 1.0
+        }
+      ],
+      "file_textures": {
+        "tissue": {
+          "file": "assets/others_0001_color_1k.jpg",
+          "sha256": "33c86b78de2a4766f6f5fbce70871891ac870c73e9b454db398eacd23051b015",
+          "orientation": 0,
+          "repeat": [
+            3,
+            22
+          ],
+          "offset": [
+            0,
+            0
+          ],
+          "interpolation": "bilinear",
+          "color_space": "srgb",
+          "seam": "periodic",
+          "seed": null,
+          "interpretation": "Procedural stylized organic color texture; not measured tissue reflectance. Only color map used; no normal, roughness, height or AO maps applied."
+        }
+      },
+      "material_barycentric_dtype": "float64"
+    }
+  ],
+  "conditions": [
+    "static",
+    "fem",
+    "nonfem"
+  ],
+  "fps": 15,
+  "contrasts": {},
+  "dataset_versions": [
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+  ],
+  "local_windows": {
+    "length": 15,
+    "stride": 10
+  }
+}

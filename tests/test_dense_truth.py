@@ -223,3 +223,19 @@ def test_high_precision_zbuffer_retains_sub_float32_depth_ordering():
     assert buffers.depth.dtype == np.float64
     assert buffers.screen_barycentric.dtype == np.float64
     assert buffers.triangle_index[18,24] == 1
+
+
+def test_explicit_float64_material_weights_preserve_large_world_reprojection():
+    offset = np.array([53., 81., -32.])
+    vertices = (np.array([[-2., -1.5, 2.], [2., -1.5, 5.], [0., 2., 3.]]) + offset).astype(np.float32)
+    args = (vertices, np.array([[0, 1, 2]]), np.zeros((3, 2)), np.full((1, 1, 3), 128, np.uint8), INTR, IDENTITY, offset)
+    _, default = render_rgb_and_truth(*args, high_precision=True)
+    _, explicit = render_rgb_and_truth(*args, high_precision=True, material_barycentric_dtype='float32')
+    for key in default:
+        np.testing.assert_array_equal(default[key], explicit[key])
+    _, precise = render_rgb_and_truth(*args, high_precision=True, material_barycentric_dtype='float64')
+    assert precise['material_barycentric'].dtype == np.float64
+    rr, cc = np.where(precise['valid'])
+    points = precise['material_barycentric'][rr, cc] @ vertices.astype(float) - offset
+    uv = np.column_stack((INTR.fx * points[:, 0] / points[:, 2] + INTR.cx, INTR.cy - INTR.fy * points[:, 1] / points[:, 2]))
+    np.testing.assert_allclose(uv, np.column_stack((cc + .5, rr + .5)), atol=1e-10)

@@ -58,6 +58,19 @@ class PublicDataset:
         return image
 
 
+    def image_rgb(self, frame: int, stream: str = "stationary", texture: str = "procedural") -> np.ndarray:
+        """Explicit uint8 RGB API. Historical rgb() continues returning BGR."""
+        if texture == 'procedural':
+            return cv2.cvtColor(self.rgb(frame, stream), cv2.COLOR_BGR2RGB)
+        if texture not in self.descriptor.get('texture_variants', []):
+            raise ValueError('Unknown texture variant')
+        record = self._frame(stream, frame)
+        path = self.public_paths(stream)['rgb'].parent / ('rgb_' + texture) / record['image']
+        image = cv2.imread(str(path))
+        if image is None: raise FileNotFoundError(path)
+        return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+
 class EvaluationDataset(PublicDataset):
     """Explicitly privileged reader. Never pass its truth outputs to inference.
 

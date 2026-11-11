@@ -132,6 +132,17 @@ def freeze(spec_path,out):
             if p.is_file(): sources[str(Path(logical)/filename)]=p
     out.mkdir(parents=True,exist_ok=False)
     write_json(out/'SPECIFICATION.json',spec)
+    import shutil
+    for family in spec['families']:
+        for entry in family.get('file_textures',{}).values():
+            relative=Path(entry['file'])
+            if relative.is_absolute() or '..' in relative.parts:raise ValueError('Asset path must be relative')
+            asset=spec_path.parent/relative
+            if sha(asset)!=entry['sha256']:raise ValueError('Texture does not match frozen hash')
+            dest=out/relative;dest.parent.mkdir(parents=True,exist_ok=True)
+            if dest.exists():
+                if sha(dest)!=entry['sha256']:raise ValueError('Conflicting texture asset')
+            else:shutil.copyfile(asset,dest)
     provenance=out/'provenance';provenance.mkdir()
     mapping={logical:sha(p) for logical,p in sorted(sources.items())}
     with tarfile.open(provenance/'sources.tar.gz','w:gz') as tar:
@@ -185,7 +196,11 @@ def prepare(root,family_id):
     out=root/'families'/family_id;out.mkdir(parents=True,exist_ok=False)
     cfg=load_config_dict(family['generator_config']);preset=cfg.difficulty_presets['colon_benchmark']
     rng=np.random.default_rng(cfg.seed)
-    geom=build_tube_static_geometry(cfg.tube,preset,rng)
+    if 'collection_geometry' in family:
+        from .collection_geometry import geometry
+        geom=geometry(cfg.tube,preset,rng,family['collection_geometry'])
+    else:
+        geom=build_tube_static_geometry(cfg.tube,preset,rng)
     texture,features=generate_texture_with_qa(cfg.texture,np.random.default_rng(cfg.seed+1))
     v=tube_vertices_from_radius(geom,geom.base_radius)
     fields,fea,diag=solve_benchmark_fields(geom,cfg.tube,family['patches'],family['fem_peak_fractions'])
@@ -196,9 +211,18 @@ def prepare(root,family_id):
                         s_norm=geom.s_norm,theta=geom.theta,vertex_material_id=np.arange(len(v)))
     cv2.imwrite(str(private/'texture.png'),texture)
     np.savez_compressed(private/'mechanics.npz',**fea)
-    w=waveform(family['action_frames'])
+    if 'temporal_coefficients' in family:
+        from .collection_geometry import coefficients
+        w=coefficients(family)
+    else:
+        w=waveform(family['action_frames'])
     np.savez_compressed(private/'fields.npz',fem_basis=fields,nonfem_basis=nonfem,time_coefficients=w)
-    poses=make_poses(geom,family,cfg);np.savez_compressed(private/'poses.npz',**poses)
+    if 'acquisition' in family:
+        from .collection_geometry import poses as collection_poses
+        poses=collection_poses(geom,family,cfg)
+    else:
+        poses=make_poses(geom,family,cfg)
+    np.savez_compressed(private/'poses.npz',**poses)
     write_json(private/'MECHANICS.json',{'model':'linear isotropic C3D6 assembled on mapped curved shell nodes',
        'surface':'bilinear periodic interpolation of outer FE nodes; exact prescribed rendered kinematics',
        'boundary':'both end rings fixed','clinical_or_tissue_validation':False,'basis_diagnostics':diag,
@@ -208,9 +232,9 @@ def prepare(root,family_id):
        'gauss_strain_components':['xx','yy','zz','engineering_xy','engineering_yz','engineering_zx'],
        'units':'abstract length; force and E consistently used numerically, not physical tissue calibration'})
     intr=asdict(cfg.intrinsics);write_json(out/'public'/'intrinsics.json',intr)
-    write_json(out/'public'/'acquisition.json',{'reference_frames':90,'action_frames':90,'fps':spec['fps'],
+    write_json(out/'public'/'acquisition.json',{'reference_frames':family['reference_frames'],'action_frames':family['action_frames'],'fps':spec['fps'],
         'stationarity':'camera physically stationary throughout stationary action, registered using terminal rigid scan image',
-        'reference_bridge_image':'reference/rgb/000089.png','reference_is_unloaded_anatomy':False,
+        'reference_bridge_image':f"reference/rgb/{family['reference_frames']-1:06d}.png",'reference_is_unloaded_anatomy':False,
         'moving_action':'separate repositioned capture; no reference-to-moving continuity or cross-boundary local window',
         'clock':'logical acquisition timestamps; paired action streams share material-state times, not simultaneous physical cameras'})
     write_json(out/'PREPARATION.json',{'family':family_id,'split':family['split'],'texture_orb':features,'inference_fitted':False,
@@ -226,7 +250,7 @@ def link(src,dst):
 def create_package(root,family_id,condition):
     spec,family=get_spec(root,family_id)
     fi=spec['families'].index(family);ci=spec['conditions'].index(condition)
-    version=3+3*fi+ci;out=root/f'v{version}';out.mkdir(exist_ok=False)
+    version=family.get('package_base',3+3*fi)+ci;out=root/f'v{version}';out.mkdir(exist_ok=False)
     common=root/'families'/family_id
     link(common/'public'/'intrinsics.json',out/'public'/'intrinsics.json')
     link(common/'public'/'acquisition.json',out/'public'/'acquisition.json')
@@ -237,7 +261,8 @@ def create_package(root,family_id,condition):
         'split':family['split'],'reference':'public/reference','streams':['moving','stationary'],
         'truth':'evaluation','inference_allowlist':['public','reconstruction'],
         'contrasts':spec['contrasts'],'paired_acquisitions':True,'independent_family_count':1,
-        'ground_truth_at_inference':False,'generated_synthetic':True})
+        'ground_truth_at_inference':False,'generated_synthetic':True,
+        'texture_variants':['procedural']+list(family.get('file_textures',{}))})
     return out
 
 
@@ -250,7 +275,7 @@ def render(root,family_id,condition,stream):
         out=common/'public'/'reference';truth=common/'reference_truth';n=family['reference_frames'];condition='static'
         verts=np.repeat(base[None],n,axis=0)
     else:
-        version=3+spec['families'].index(family)*3+spec['conditions'].index(condition)
+        version=family.get('package_base',3+spec['families'].index(family)*3)+spec['conditions'].index(condition)
         package=root/f'v{version}'
         out=package/'public'/stream;truth=package/'evaluation'/stream;n=family['action_frames']
         if condition=='static':disp=np.zeros((n,*base.shape),dtype=np.float32)
@@ -258,15 +283,28 @@ def render(root,family_id,condition,stream):
         verts=(base[None]+disp).astype(np.float32)
     out.mkdir(parents=True,exist_ok=False);truth.mkdir(parents=True,exist_ok=False)
     (out/'rgb').mkdir();(truth/'dense').mkdir();(truth/'flow_forward').mkdir()
+    file_textures={}
+    if family.get('file_textures'):
+        from .file_texture import load_texture, image_from_material
+        for name,entry in family['file_textures'].items():
+            if not name.isidentifier():raise ValueError('Texture name must be an identifier')
+            file_textures[name]=(load_texture(root,entry),entry)
+            (out/('rgb_'+name)).mkdir()
     rotations=pose[stream+'_R'];centers=pose[stream+'_C']
     prescribed=np.zeros_like(verts) if stream=='reference' else disp
     np.savez_compressed(truth/'states.npz',vertices=verts,displacement=(verts.astype(np.float64)-base.astype(np.float64)),
                          prescribed_displacement=prescribed,
                          R_wc=rotations,C_world=centers,action_time_seconds=np.arange(n)/spec['fps'],
-                         time_seconds=(np.arange(n)+(0 if stream=='reference' else 90))/spec['fps'])
+                         time_seconds=(np.arange(n)+(0 if stream=='reference' else family['reference_frames']))/spec['fps'])
     records=[];quality=[];start=time.monotonic()
     for t in range(n):
-        rgb,buffers=render_rgb_and_truth(verts[t],tris,geom['uv'],texture,cfg.intrinsics,rotations[t],centers[t],periodic_u=True,high_precision=True)
+        rgb,buffers=render_rgb_and_truth(verts[t],tris,geom['uv'],texture,cfg.intrinsics,rotations[t],centers[t],periodic_u=True,high_precision=True,
+            material_barycentric_dtype=family.get('material_barycentric_dtype','float32'))
+        for name,(texture_image,texture_spec) in file_textures.items():
+            variant=image_from_material(buffers,tris,geom['uv'],texture_image,texture_spec)
+            variant_rng=np.random.default_rng(cfg.seed+100000+(0 if stream=='reference' else 10000 if stream=='moving' else 20000)+t)
+            variant=apply_photometric_noise(variant,variant_rng,cfg.photometric)
+            if not cv2.imwrite(str(out/('rgb_'+name)/f'{t:06d}.png'),variant):raise IOError(name)
         rng=np.random.default_rng(cfg.seed+100000+(0 if stream=='reference' else 10000 if stream=='moving' else 20000)+t)
         rgb=apply_photometric_noise(rgb,rng,cfg.photometric)
         path=out/'rgb'/f'{t:06d}.png'
@@ -275,14 +313,15 @@ def render(root,family_id,condition,stream):
         if t<n-1:
             flow=flow_to_frame(buffers,verts[t+1],tris,cfg.intrinsics,rotations[t+1],centers[t+1],high_precision=True)
             np.savez_compressed(truth/'flow_forward'/f'{t:06d}.npz',**flow)
-        records.append({'image':path.name,'timestamp_s':(t if stream=='reference' else 90+t)/spec['fps'],
+        records.append({'image':path.name,'timestamp_s':(t if stream=='reference' else family['reference_frames']+t)/spec['fps'],
                         'state_index':t,'acquisition':stream})
         quality.append({'frame':t,'orb_features':orb_feature_count(rgb),'surface_fraction':float(buffers['valid'].mean())})
         if t%15==0:print(json.dumps({'family':family_id,'condition':condition,'stream':stream,'frame':t,'elapsed_s':time.monotonic()-start}),flush=True)
     write_json(out/'frames.json',{'frames':records,'intrinsics':'../intrinsics.json','uses_truth':False})
     write_json(truth/'QUALITY.json',quality)
     write_json(truth/'CONVENTIONS.json',{'camera':'x right, y up, z forward; p_c=R_wc.T@(p_w-C)',
-        'high_precision':True,'arithmetic':'exact stored float32 geometry/camera values promoted before subtraction; float64 camera transforms, projection, raster weights, z-buffer and flow visibility; float32 stored depth/material barycentrics',
+        'high_precision':True,'arithmetic':'exact stored float32 geometry/camera values promoted before subtraction; float64 camera transforms, projection, raster weights, z-buffer and flow visibility; float32 stored depth',
+        'material_barycentric_dtype':family.get('material_barycentric_dtype','float32'),
         'texture':'periodic angular U: unwrap crossing triangles before physical barycentric interpolation, modulo1; nearest floor(U*(width-1)); terminal fan caps use arbitrary inherited closure UV, not a physical or clinical texture map',
         'projection':'u=fx*x/z+cx; v=cy-fy*y/z; samples at col+.5,row+.5',
         'COLMAP_conversion':'camera/world reflection F=diag(1,-1,1); C_colmap=F C; R_cw_colmap=F R_wc.T F',

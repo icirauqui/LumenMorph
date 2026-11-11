@@ -32,6 +32,7 @@ def render_rgb_and_truth(
     *,
     periodic_u: bool = False,
     high_precision: bool = False,
+    material_barycentric_dtype: str = "float32",
 ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
     """Render unshaded RGB and truth from one perspective-correct z-buffer.
 
@@ -44,7 +45,8 @@ def render_rgb_and_truth(
     interpolation and wraps the resulting U modulo one, for welded tubes.
     The default preserves the historical nonperiodic texture convention.
     ``high_precision=True`` promotes geometry/camera arithmetic before any
-    transform or projection; dense stored depths/barycentrics remain float32.
+    transform or projection. Depth remains float32; material weights default to
+    float32, with explicit float64 storage for large-coordinate acquisitions.
     Apply photometric noise to the returned image separately if desired.
     """
     vertices_world = np.asarray(vertices_world)
@@ -57,15 +59,17 @@ def render_rgb_and_truth(
     face_vertices = triangles[buffers.triangle_index[valid]]
     vertices_cam, _, _ = _camera_projection(vertices_world, intr, R_wc, t_wc,
                                            high_precision=high_precision)
-    bary = np.full((*valid.shape, 3), np.nan, dtype=np.float32)
+    if material_barycentric_dtype not in ("float32", "float64"):
+        raise ValueError("Material weights require float32 or float64 storage")
+    bary = np.full((*valid.shape, 3), np.nan, dtype=material_barycentric_dtype)
     clipped = np.zeros_like(valid)
     if buffers.clipped_material_barycentric is not None:
         clipped = valid & np.all(np.isfinite(buffers.clipped_material_barycentric), axis=-1)
-        bary[clipped] = buffers.clipped_material_barycentric[clipped].astype(np.float32)
+        bary[clipped] = buffers.clipped_material_barycentric[clipped].astype(bary.dtype)
     ordinary = valid & ~clipped
     bary[ordinary] = perspective_correct_barycentric(
         buffers.screen_barycentric[ordinary], vertices_cam[triangles[buffers.triangle_index[ordinary]], 2]
-    ).astype(np.float32)
+    ).astype(bary.dtype)
     # Both RGB and all evaluator fields use these same stored material weights.
     triangle_uv = np.asarray(uv_vertices)[face_vertices].copy()
     if periodic_u:

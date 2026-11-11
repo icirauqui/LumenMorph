@@ -1,0 +1,8 @@
+# Collection producer, readers, evaluation and independent validation.
+# Qualified production: CPython 3.14, Linux x86_64. No browser/API dependencies.
+numpy==2.4.4
+scipy==1.17.1
+opencv-python-headless==4.13.0.92
+pytest==9.0.3
+trimesh==4.9.0
+rtree==1.4.1

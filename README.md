@@ -15,27 +15,27 @@ simulator or a claim of validated tissue mechanics.
 
 Source code: <https://github.com/icirauqui/LumenMorph>.
 
-Current software release: **1.0.2**,
-[tag `v1.0.2`](https://github.com/icirauqui/LumenMorph/tree/v1.0.2).
-For a pinned checkout with its mechanics dependency:
+Software version **2.0.0** provides generation, RGB readers, material queries,
+evaluation and independent validation for the collection of eight seeded families.
+The resource includes paired cameras and motion conditions, matched procedural
+and file textures, and five path-traced appearance conditions on four families.
 
 ```bash
-git clone --branch v1.0.2 --recurse-submodules https://github.com/icirauqui/LumenMorph.git
+git clone --branch v2.0.0 --recurse-submodules https://github.com/icirauqui/LumenMorph.git
 cd LumenMorph
+python3 -m venv .venv
+.venv/bin/python -m pip install -r backend/requirements-collection.txt
 ```
 
-The published dataset is the **Synthetic Deformable Tubular Benchmark with
-Dense Ground Truth and Mechanical Annotations**, version **1.0.0**:
-[doi:10.57967/hf/10850](https://doi.org/10.57967/hf/10850).
-[Dataset repository](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark) ·
-[Reproducibility material](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark-reproducibility).
-The dataset DOI fixes public naming edition `v1.0.1` (scientific version 1.0.0).
-Reproducibility material `v1.1.0` has its own
-[doi:10.57967/hf/10851](https://doi.org/10.57967/hf/10851).
-Software and dataset versions identify separate artifacts. Version 1.0.2
-contains the corrected clipping, dense-truth and benchmark-flow code; the
-released dataset retains its recorded historical producer identities. See
-[CHANGELOG.md](CHANGELOG.md) and [docs/REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
+Start with the [collection guide](docs/COLLECTION.md). Its numerical workflow
+needs neither the browser workspace nor Node.js. Download the complete resource
+or the small self-contained reader/evaluation example from the
+[dataset repository](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark).
+The separate [reproduction repository](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark-reproducibility)
+contains exact producer sources, runtime identities, validation reports and
+commands. Component manifests retain immutable provenance and reused-file hashes.
+Use the release-specific download instructions and `COLLECTION.json` rather than
+infer scientific conditions from package directory numbers.
 
 ## Documentation
 
