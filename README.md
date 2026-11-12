@@ -15,13 +15,13 @@ simulator or a claim of validated tissue mechanics.
 
 Source code: <https://github.com/icirauqui/LumenMorph>.
 
-Software version **2.0.2** provides generation, RGB readers, material queries,
+Software version **2.0.3** provides generation, RGB readers, material queries,
 evaluation and independent validation for the collection of eight seeded families.
 The resource includes paired cameras and motion conditions, matched procedural
 and file textures, and five path-traced appearance conditions on four families.
 
 ```bash
-git clone --branch v2.0.2 --recurse-submodules https://github.com/icirauqui/LumenMorph.git
+git clone --branch v2.0.3 --recurse-submodules https://github.com/icirauqui/LumenMorph.git
 cd LumenMorph
 python3 -m venv .venv
 .venv/bin/python -m pip install -r backend/requirements-collection.txt
@@ -389,3 +389,21 @@ dependencies must be reported as omitted coverage, not a complete test pass.
 The current CPU rasterizer clips near-plane crossing triangles while retaining
 original material identity. The original sealed bank and its producer archive
 remain unchanged; consult their conventions when replaying historical bytes.
+
+
+## Auxiliary reconstruction execution
+
+`python -m backend.src.benchmark_reconstruction --help` documents the calibrated
+CPU SfM driver. `--timeout 0` (the default) lets every command finish naturally;
+positive values impose an explicitly requested seconds-per-command budget.
+A timed-out command is an interrupted computation, not evidence that a sequence
+cannot be reconstructed. The driver retains every model and requested window.
+
+For a sufficiently sized RAM filesystem or other fast scratch storage, pass
+`--database-directory /path/to/new/job_database`. The directory must not exist.
+Images, calibration and scientific options are unchanged. Logs, model outputs
+and reports use `--output`; a hash-verified ordinary-file database checkpoint is
+written there after each closed command. Do not copy or relocate the working
+database during a command. The working directory can be retired only after the
+persistent copy has been verified and the job has closed. Interrupted attempts
+must be retained separately from subsequent executions.

@@ -104,3 +104,37 @@ def test_reference_has_no_local_reconstruction(tmp_path, monkeypatch):
     result = br.run_reconstruction(rgb, intr, tmp_path / 'out', '/fake/colmap', '/fake/fork', mode='reference')
     assert result['complete'] and result['locals'] == []
     assert len([cmd for cmd in commands if cmd[1] == 'mapper']) == 1
+
+
+def test_ram_database_persists_identical_bytes_and_commands_have_no_deadline(tmp_path, monkeypatch):
+    rgb, intr = inputs(tmp_path)
+    commands = install_fake(monkeypatch)
+    original_run = br.subprocess.run
+    deadlines = []
+    def checked_run(argv, **kwargs):
+        deadlines.append(kwargs.get('timeout'))
+        return original_run(argv, **kwargs)
+    monkeypatch.setattr(br.subprocess, 'run', checked_run)
+    out = tmp_path / 'out'
+    ram = tmp_path / 'working'
+    result = br.run_reconstruction(rgb, intr, out, '/fake/colmap', '/fake/fork', database_directory=ram)
+    assert result['complete'] and deadlines and all(x is None for x in deadlines)
+    assert (out/'database.db').read_bytes() == (ram/'database.db').read_bytes()
+    assert result['final_database_sha256'] == br.sha(out/'database.db')
+    assert all(c['database_checkpoint'] for c in result['commands'])
+    assert all(str(ram/'database.db') in c for c in commands if '--database_path' in c)
+    assert not any(p.is_symlink() for p in out.rglob('*'))
+
+
+def test_checkpoint_removes_only_its_stale_sqlite_sidecar(tmp_path):
+    source = tmp_path / 'working'; source.mkdir()
+    out = tmp_path / 'out'; out.mkdir()
+    (source/'database.db').write_bytes(b'db')
+    (source/'database.db-wal').write_bytes(b'wal')
+    (out/'other-record').write_bytes(b'preserve')
+    br.checkpoint_database(source/'database.db', out)
+    assert (out/'database.db-wal').read_bytes() == b'wal'
+    (source/'database.db-wal').unlink()
+    br.checkpoint_database(source/'database.db', out)
+    assert not (out/'database.db-wal').exists()
+    assert (out/'other-record').read_bytes() == b'preserve'

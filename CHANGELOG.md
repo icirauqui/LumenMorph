@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.3 — 2026-11-12
+
+- Auxiliary SfM execution has no elapsed-time cutoff by default; an explicit
+  positive timeout remains available when a bounded experiment requires it.
+- Optional separate SQLite working directory with hash-verified persistent
+  checkpoints after every closed command. Scientific reconstruction options,
+  image ordering, seeds and registration-completeness criteria are unchanged.
+- Tests cover unlimited execution, complete local-window traversal and ordinary
+  persistent database copies, including removal of stale SQLite sidecars.
+
 ## 2.0.2 — 2026-11-12
 
 - Explicit unit-sum decoding of float32 material coordinates for geometric

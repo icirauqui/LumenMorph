@@ -137,8 +137,39 @@ def provenance(executable, fork_source, output):
     return result
 
 
+def checkpoint_database(database, output):
+    """Copy only a closed command's SQLite files to persistent ordinary files."""
+    database, output = Path(database), Path(output)
+    if database.parent == output:
+        return None
+    files = sorted(database.parent.glob(database.name + '*'))
+    records = {}
+    for source in files:
+        if not source.is_file() or source.is_symlink():
+            raise ValueError('Unexpected database payload: ' + str(source))
+        target = output / source.name
+        temporary = output / (source.name + '.checkpointing')
+        shutil.copyfile(source, temporary)
+        digest = sha(source)
+        if sha(temporary) != digest:
+            raise ValueError('Checkpoint checksum mismatch')
+        with temporary.open('rb') as stream:
+            os.fsync(stream.fileno())
+        temporary.replace(target)
+        records[source.name] = dict(bytes=source.stat().st_size, sha256=digest)
+    for suffix in ['', '-wal', '-shm', '-journal']:
+        stale = output / (database.name + suffix)
+        if stale.name not in records and stale.exists():
+            stale.unlink()
+    if records:
+        write_json(output / 'DATABASE_CHECKPOINT.json', dict(
+            recorded_unix=time.time(), files=records, command_closed=True,
+            working_directory=str(database.parent)))
+    return records
+
+
 def run_reconstruction(images, intrinsics, output, executable, fork_source, *,
-                       mode='moving', threads=2, bundle_size=15, stride=10, timeout=3600):
+                       mode='moving', threads=2, bundle_size=15, stride=10, timeout=0, database_directory=None):
     if mode not in ('reference', 'moving'):
         raise ValueError('Stationary action has no independent triangulation baseline; use reference associations')
     if threads < 1:
@@ -151,10 +182,14 @@ def run_reconstruction(images, intrinsics, output, executable, fork_source, *,
     (output / 'logs').mkdir()
     (output / 'window_lists').mkdir()
     images, executable = str(Path(images).resolve()), str(Path(executable).resolve())
-    database = output / 'database.db'
+    database_root = Path(database_directory).absolute() if database_directory else output
+    if database_directory:
+        database_root.mkdir(parents=True, exist_ok=False)
+    database = database_root / 'database.db'
     meta = provenance(executable, fork_source, output)
     config = {'mode': mode, 'threads': threads, 'bundle_size': bundle_size, 'stride': stride,
-              'timeout_seconds_per_command': timeout, 'global_options': GLOBAL_OPTIONS,
+              'timeout_seconds_per_command': timeout, 'database_storage': 'explicit-working-directory' if database_directory else 'output-directory',
+              'global_options': GLOBAL_OPTIONS,
               'local_options': LOCAL_OPTIONS, 'gpu': False, 'random_seed': 0,
               'classification': 'RGB-estimated calibrated global SfM and independently estimated local SfM',
               'truth_input': False, 'output': str(output)}
@@ -176,7 +211,8 @@ def run_reconstruction(images, intrinsics, output, executable, fork_source, *,
                 code, timed_out = process.returncode, False
             except subprocess.TimeoutExpired:
                 code, timed_out = None, True
-        row = {'label': label, 'argv': argv, 'returncode': code, 'timed_out': timed_out,
+        checkpoint = checkpoint_database(database, output)
+        row = {'database_checkpoint': checkpoint, 'label': label, 'argv': argv, 'returncode': code, 'timed_out': timed_out,
                'elapsed_seconds': time.time() - start, 'log_sha256': sha(log)}
         report['commands'].append(row)
         write_json(output / 'report.json', report)
@@ -242,6 +278,7 @@ def run_reconstruction(images, intrinsics, output, executable, fork_source, *,
         report['final_database_sha256'] = sha(database)
         return report
     finally:
+        report['persistent_database_checkpoint'] = checkpoint_database(database, output)
         report['finished_unix'] = time.time()
         report['elapsed_seconds'] = report['finished_unix'] - report['started_unix']
         report['inputs_unchanged'] = input_record(images, intrinsics) == inputs
@@ -257,7 +294,8 @@ def main():
     parser.add_argument('--threads', type=int, default=2)
     parser.add_argument('--bundle-size', type=int, default=15)
     parser.add_argument('--stride', type=int, default=10)
-    parser.add_argument('--timeout', type=int, default=3600)
+    parser.add_argument('--timeout', type=int, default=0)
+    parser.add_argument('--database-directory', type=Path)
     args = vars(parser.parse_args())
     return 0 if run_reconstruction(**args)['complete'] else 2
 
