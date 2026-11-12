@@ -196,3 +196,26 @@ displacement and optional normal error retain coverage and conditional versus
 full-population scores. Every valid reference material observation remains in
 the requested population across target frames, including occlusions. Reference
 background is ineligible. Failed or nonfinite predictions remain missing.
+
+### Material-coordinate decoding and materialized references
+
+Read each raster acquisition's `evaluation/<stream>/CONVENTIONS.json`.
+`material_weight_policy: unit_sum` means that stored weights are promoted to
+float64 and divided by their sum before geometric interpolation. This restores
+partition of unity after float32 storage and preserves translation invariance.
+The policy applies to material positions, displacement and projected flow; it
+is explicit in the f07 configuration. Absence of the key, or `stored`, retains
+historical arithmetic. Texture interpolation has its separate recorded sampling
+convention; this policy does not recolor saved images.
+
+`EvaluationDataset.material_weights()` implements that decoding, and geometric
+query/evaluation methods use it automatically. A standalone consumer must apply
+the same policy before combining world vertices. The public materialized layout
+stores shared reference truth at `evaluation/reference/`; the reader also
+recognizes the historical linked-family layout. Use `image_rgb()` for RGB in
+both raster and path-traced data.
+
+An independent full-pixel geometric census can be repeated using
+[`tools/validation/README.md`](../tools/validation/README.md). Recorded producer
+capsules and validation inputs identify the precise numerical scope separately
+from arbitrary image-based reconstruction performance.

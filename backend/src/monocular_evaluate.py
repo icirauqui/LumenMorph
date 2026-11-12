@@ -79,6 +79,7 @@ def evaluate(package,predictions,protocol,output,stream='moving'):
     result['reference_image_sampling_fraction']=float(good.sum()/dense['valid'].sum()) if dense['valid'].any() else None
     result['population']='predeclared reference observations across requested frames; image sampling fraction reported separately'
     tri=dense['triangle_id'][row,col][good];weights=dense['material_barycentric'][row,col][good]
+    weights=reader.material_weights(weights,stream)
     # Decompress each required state array once, rather than once per query.
     for frame in ids:reader._frame(stream,int(frame))
     geometry=reader.geometry();faces=geometry['triangles'][tri]
@@ -110,6 +111,10 @@ def evaluate(package,predictions,protocol,output,stream='moving'):
         result.update(status='alignment_failed',reason=str(exc),camera_position={'eligible':T,'scored':0,'coverage':0.},material_position={'eligible':int(T*good.sum()),'scored':0,'coverage':0.},scale=None)
     if ph!=digest(predictions) or ah!=digest(protocol):raise ValueError('Frozen inputs changed')
     result['truth_sha256']={str(p.relative_to(package)):digest(p) for p in [package/'DATASET.json',reader.truth_path(stream)/'states.npz',package/'evaluation/family/geometry.npz',reader.truth_path(stream)/'dense'/f'{reference:06d}.npz',package/'public/intrinsics.json',reader.public_paths(stream)['frames']]}
+    conventions=reader.truth_path(stream)/'CONVENTIONS.json'
+    if conventions.is_file():result['truth_sha256'][str(conventions.relative_to(package))]=digest(conventions)
+    result['reader_sha256']=digest(Path(__file__).with_name('benchmark_reader.py'))
+    result['material_decoder_sha256']=digest(Path(__file__).with_name('material_weights.py'))
     output.parent.mkdir(parents=True,exist_ok=True);
     with output.open('x') as handle:handle.write(json.dumps(result,indent=2,allow_nan=False)+'\n')
     return result

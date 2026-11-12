@@ -427,7 +427,8 @@
           "seed": null,
           "interpretation": "Procedural stylized organic color texture; not measured tissue reflectance. Only color map used; no normal, roughness, height or AO maps applied."
         }
-      }
+      },
+      "material_weight_policy": "unit_sum"
     },
     {
       "id": "f08",

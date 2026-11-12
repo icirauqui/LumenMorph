@@ -9,6 +9,7 @@ import numpy as np
 
 from .dense_truth import flow_to_frame
 from .types import CameraIntrinsics
+from .material_weights import decode_weights
 
 
 class PublicDataset:
@@ -81,8 +82,17 @@ class EvaluationDataset(PublicDataset):
     def truth_path(self, stream: str = "stationary") -> Path:
         self._check_stream(stream)
         if stream == "reference":
+            materialized = self.package / "evaluation/reference"
+            if materialized.is_dir():
+                return materialized
             return (self.package / "evaluation/family").resolve().parent / "reference_truth"
         return self.package / "evaluation" / stream
+
+    def material_weights(self, barycentric, stream="stationary"):
+        """Decode the geometric weight policy explicitly recorded for a stream."""
+        path = self.truth_path(stream) / 'CONVENTIONS.json'
+        conventions = json.loads(path.read_text()) if path.is_file() else {}
+        return decode_weights(barycentric, conventions.get('material_weight_policy', 'stored'))
 
     def geometry(self) -> dict[str, np.ndarray]:
         with np.load(self.package / "evaluation/family/geometry.npz", allow_pickle=False) as data:
@@ -121,6 +131,7 @@ class EvaluationDataset(PublicDataset):
         if not np.all(np.isfinite(bary)) or np.any(bary < -1e-6) or not np.allclose(bary.sum(axis=-1), 1., atol=1e-6, rtol=0):
             raise ValueError("Expected finite nonnegative barycentrics summing to one")
         vertices = geometry["vertices"] if frame is None else self.state(frame, stream)["vertices"]
+        bary = self.material_weights(bary, stream)
         return np.sum(bary[..., :, None] * vertices[triangles[ids]], axis=-2)
 
     def material_displacement(
@@ -144,7 +155,8 @@ class EvaluationDataset(PublicDataset):
         conventions = json.loads((self.truth_path(stream)/'CONVENTIONS.json').read_text())
         return flow_to_frame(dense, target["vertices"], self.geometry()["triangles"],
                              self.intrinsics, target["R_wc"], target["C_world"],
-                             high_precision=conventions.get('high_precision', False))
+                             high_precision=conventions.get('high_precision', False),
+                             material_weight_policy=conventions.get('material_weight_policy', 'stored'))
 
     def mechanics(self, frame: int, stream: str = "stationary") -> dict[str, np.ndarray | float | str]:
         """Compose evaluator-only FE fields at an acquisition frame.

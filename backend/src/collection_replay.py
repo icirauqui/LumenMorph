@@ -19,7 +19,7 @@ def compare_npz(a,b):
         return {k:bool(k in x.files and k in y.files and np.array_equal(x[k],y[k],equal_nan=True)) for k in sorted(set(x.files)|set(y.files))}
 
 
-def evaluate(root,work,output):
+def evaluate(root,work,output,family_id=None):
     root,work,output=map(Path,(root,work,output))
     if work.exists() or output.exists():raise FileExistsError('Fresh work and output required')
     work.mkdir(parents=True);spec=json.loads((root/'SPECIFICATION.json').read_text())
@@ -28,6 +28,7 @@ def evaluate(root,work,output):
     benchmark.verify_sources(root);families=[]
     for family in spec['families']:
         name=family['id']
+        if family_id is not None and name!=family_id:continue
         if not (root/'families'/name).exists():continue
         benchmark.prepare(work,name);old=root/'families'/name/'evaluation';new=work/'families'/name/'evaluation'
         checks={p:compare_npz(old/p,new/p) for p in ['geometry.npz','fields.npz','mechanics.npz','poses.npz']}
@@ -37,7 +38,8 @@ def evaluate(root,work,output):
         with np.load(new/'fields.npz') as z:field=dict(z)
         with np.load(new/'poses.npz') as z:pose=dict(z)
         external={k:load_texture(work,v) for k,v in family['file_textures'].items()};frames=[]
-        for condition,stream,t in [('static','reference',0),('fem','moving',family['action_frames']//2),('nonfem','moving',family['action_frames']//2)]:
+        schedule=[('static','reference')]+[(c,st) for c in ['static','fem','nonfem'] for st in ['moving','stationary']]
+        for condition,stream,t in [(c,st,t) for c,st in schedule for t in [0,family['action_frames']//2,family['action_frames']-2]]:
             if stream=='reference':truth=root/'families'/name/'reference_truth';public=root/'families'/name/'public/reference'
             else:
                 package=root/f"v{family['package_base']+spec['conditions'].index(condition)}";truth=package/'evaluation'/stream;public=package/'public'/stream
@@ -51,15 +53,16 @@ def evaluate(root,work,output):
             image_checks={}
             for variant in ['procedural']+list(external):
                 image=rgb if variant=='procedural' else image_from_material(dense,g['triangles'],g['uv'],external[variant],family['file_textures'][variant])
-                rng=np.random.default_rng(cfg.seed+100000+(0 if stream=='reference' else 10000)+t);image=apply_photometric_noise(image,rng,cfg.photometric)
+                rng=np.random.default_rng(cfg.seed+100000+(0 if stream=='reference' else 10000 if stream=='moving' else 20000)+t);image=apply_photometric_noise(image,rng,cfg.photometric)
                 path=public/('rgb' if variant=='procedural' else 'rgb_'+variant)/f'{t:06d}.png'
                 image_checks[variant]=bool(np.array_equal(image,cv2.imread(str(path))))
-            flow=flow_to_frame(dense,vt,g['triangles'],cfg.intrinsics,pose[stream+'_R'][t+1],pose[stream+'_C'][t+1],high_precision=True)
+            flow=flow_to_frame(dense,vt,g['triangles'],cfg.intrinsics,pose[stream+'_R'][t+1],pose[stream+'_C'][t+1],high_precision=True,material_weight_policy=family.get('material_weight_policy','stored'))
             with np.load(truth/'flow_forward'/f'{t:06d}.npz') as z:flow_checks={k:bool(np.array_equal(flow[k],z[k],equal_nan=True)) for k in z.files}
             frames.append(dict(condition=condition,stream=stream,frame=t,dense=dense_checks,images=image_checks,flow=flow_checks,passed=all(dense_checks.values()) and all(image_checks.values()) and all(flow_checks.values())))
         families.append(dict(family=name,preparation=checks,observations=frames,passed=all(all(x.values()) for x in checks.values()) and all(x['passed'] for x in frames)))
         print(json.dumps({'family':name,'passed':families[-1]['passed']}),flush=True)
-    result=dict(schema='collection_producer_replay_v1',source_sha256=benchmark.sha(__file__),producer_freeze_sha256=benchmark.sha(root/'provenance/SOURCE_FREEZE.json'),families=families,passed=all(x['passed'] for x in families),scope='Fresh preparation and selected FE/non-FE/static observations, both textures and temporal flow; exact arrays/pixels in the recorded runtime, not cross-platform equality.')
+    if not families:raise ValueError('No selected family is present in the replay inputs')
+    result=dict(schema='collection_producer_replay_v1',source_sha256=benchmark.sha(__file__),producer_freeze_sha256=benchmark.sha(root/'provenance/SOURCE_FREEZE.json'),families=families,passed=all(x['passed'] for x in families),scope='Fresh preparation and 21 observations per family: three reference states and three states of every static/FE/non-FE moving/stationary acquisition, both textures and next-frame flow; exact arrays/pixels in the recorded runtime, not cross-platform equality.')
     output.parent.mkdir(parents=True,exist_ok=True)
     with output.open('x') as handle:handle.write(json.dumps(result,indent=2)+'\n')
     return result
@@ -67,4 +70,5 @@ def evaluate(root,work,output):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for name in ['root','work','output']:p.add_argument('--'+name,required=True)
+    p.add_argument('--family-id')
     sys.exit(0 if evaluate(**vars(p.parse_args()))['passed'] else 1)

@@ -18,6 +18,7 @@ from scipy.spatial import cKDTree
 from .renderer import (_camera_projection, _projected_triangles,
                        perspective_correct_barycentric, rasterize_mesh_buffers)
 from .types import CameraIntrinsics
+from .material_weights import decode_weights
 
 
 def render_rgb_and_truth(
@@ -175,6 +176,7 @@ def flow_to_frame(
     depth_atol: float = 1e-5,
     depth_rtol: float = 1e-5,
     high_precision: bool = False,
+    material_weight_policy: str = "stored",
 ) -> dict[str, np.ndarray]:
     """Advect source pixels by fixed material identity; compute exact visibility.
 
@@ -187,6 +189,8 @@ def flow_to_frame(
     occlusions. ``depth_atol`` is in mesh units; ``depth_rtol`` is dimensionless.
     Use ``high_precision=True`` when source truth was rendered with that mode;
     it applies float64 camera arithmetic both to endpoints and visibility rays.
+    ``material_weight_policy='unit_sum'`` restores the partition of unity after
+    decoding stored weights. The default preserves historical flow arithmetic.
     """
     valid = source_truth["valid"]
     h, w = valid.shape
@@ -194,7 +198,7 @@ def flow_to_frame(
         raise ValueError("Source and destination images must have matching size")
     tri_ids = source_truth["triangle_id"][valid]
     face_vertices = np.asarray(triangles)[tri_ids]
-    bary = source_truth["material_barycentric"][valid].astype(np.float64)
+    bary = decode_weights(source_truth["material_barycentric"][valid], material_weight_policy)
     points = np.sum(bary[:, :, None] * np.asarray(target_vertices_world)[face_vertices], axis=1)
     pc, target_uv, front = _camera_projection(points, intr, R_wc, t_wc,
                                              high_precision=high_precision)

@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.0.2 — 2026-11-12
+
+- Explicit unit-sum decoding of float32 material coordinates for geometric
+  queries and flow; existing datasets retain their recorded arithmetic.
+- Read materialized reference acquisitions directly, while retaining support
+  for historical linked layouts.
+- Record geometric weight conventions and decoder identities in evaluation
+  receipts; regression tests cover affine invariance and visibility.
+- Independent accelerated full-pixel first-hit census and qualified native ray backend.
+- Producer replay covers reference and every motion/camera condition at three times,
+  both textures and next-frame flow, with the declared material-coordinate policy.
+- Restore source-only freeze support for specifications without scene families.
+
 ## 2.0.1 — 2026-11-11
 
 - Direct the colon-layout family's sigmoid toward the medial side after the

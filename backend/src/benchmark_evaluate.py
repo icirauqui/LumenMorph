@@ -118,6 +118,9 @@ def evaluate(package, predictions, output, task, frame, stream='moving', target=
     eligible = dense['valid']
     inputs = [package/'DATASET.json',package/'public/intrinsics.json',
               reader.public_paths(stream)['frames'],reader.truth_path(stream)/'dense'/f'{frame:06d}.npz']
+    conventions = reader.truth_path(stream)/'CONVENTIONS.json'
+    if conventions.is_file():
+        inputs.append(conventions)
     strata = {}
     if task == 'depth':
         truth = dense['depth_z']
@@ -152,6 +155,7 @@ def evaluate(package, predictions, output, task, frame, stream='moving', target=
                   primary=scores,secondary_strata=extra,prediction_sha256=prediction_hash,
                   evaluator_sha256=digest(__file__),truth_inputs_sha256={str(p):digest(p) for p in inputs},
                   reader_sha256=digest(Path(__file__).with_name('benchmark_reader.py')),
+                  material_decoder_sha256=digest(Path(__file__).with_name('material_weights.py')),
                   population_rule='fixed truth validity; prediction mask only marks unavailable output; no truth alignment or method-specific eligibility',
                   metrics_scope='depth absolute; normal angular; flow/displacement endpoint error; no division by true displacement')
     if task == 'flow':

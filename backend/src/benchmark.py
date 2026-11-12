@@ -133,7 +133,7 @@ def freeze(spec_path,out):
     out.mkdir(parents=True,exist_ok=False)
     write_json(out/'SPECIFICATION.json',spec)
     import shutil
-    for family in spec['families']:
+    for family in spec.get('families', []):
         for entry in family.get('file_textures',{}).values():
             relative=Path(entry['file'])
             if relative.is_absolute() or '..' in relative.parts:raise ValueError('Asset path must be relative')
@@ -311,7 +311,8 @@ def render(root,family_id,condition,stream):
         if not cv2.imwrite(str(path),rgb):raise IOError(path)
         np.savez_compressed(truth/'dense'/f'{t:06d}.npz',**buffers)
         if t<n-1:
-            flow=flow_to_frame(buffers,verts[t+1],tris,cfg.intrinsics,rotations[t+1],centers[t+1],high_precision=True)
+            flow=flow_to_frame(buffers,verts[t+1],tris,cfg.intrinsics,rotations[t+1],centers[t+1],high_precision=True,
+                material_weight_policy=family.get('material_weight_policy','stored'))
             np.savez_compressed(truth/'flow_forward'/f'{t:06d}.npz',**flow)
         records.append({'image':path.name,'timestamp_s':(t if stream=='reference' else family['reference_frames']+t)/spec['fps'],
                         'state_index':t,'acquisition':stream})
@@ -322,6 +323,7 @@ def render(root,family_id,condition,stream):
     write_json(truth/'CONVENTIONS.json',{'camera':'x right, y up, z forward; p_c=R_wc.T@(p_w-C)',
         'high_precision':True,'arithmetic':'exact stored float32 geometry/camera values promoted before subtraction; float64 camera transforms, projection, raster weights, z-buffer and flow visibility; float32 stored depth',
         'material_barycentric_dtype':family.get('material_barycentric_dtype','float32'),
+        'material_weight_policy':family.get('material_weight_policy','stored'),
         'texture':'periodic angular U: unwrap crossing triangles before physical barycentric interpolation, modulo1; nearest floor(U*(width-1)); terminal fan caps use arbitrary inherited closure UV, not a physical or clinical texture map',
         'projection':'u=fx*x/z+cx; v=cy-fy*y/z; samples at col+.5,row+.5',
         'COLMAP_conversion':'camera/world reflection F=diag(1,-1,1); C_colmap=F C; R_cw_colmap=F R_wc.T F',
