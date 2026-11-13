@@ -1,9 +1,8 @@
-# Evaluate predictions on the fixed tubular bank
+# Evaluate predictions on the tubular collection
 
 `backend.src.benchmark_evaluate` scores a supplied prediction file. It runs no
 estimator, chooses no algorithm settings and changes no dataset files. It
-supports the complete existing bank without creating additional rendered
-versions. Apply the suite's family split and exposure rules to every task.
+supports the raster collection. Apply the suite's family split and exposure rules to every task.
 
 The prediction file is an NPZ containing a real numeric array named `prediction`
 and optionally a boolean H×W array named `mask`. No other keys are accepted.
@@ -69,6 +68,11 @@ not automatically absolute-world or scale recovery. Depth likewise assumes
 the declared scene units and receives no truth-based rescaling.
 
 ## Run from the generator checkout
+
+These `benchmark/v2` commands require the complete f01 FE package, not the
+compact f07/f08 example. For the latter, follow [first use](FIRST_USE.md) and
+`examples/consume_collection.py`. See the [collection guide](COLLECTION_GUIDE.md)
+for operational visibility classes, reconstruction components and pose diagnostics.
 
 ```sh
 backend/.venv/bin/python -m backend.src.benchmark_evaluate \

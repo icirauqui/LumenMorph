@@ -22,6 +22,8 @@ python3 -m venv .venv
 The mechanics source is the pinned `continuum-fem` Git submodule. No browser,
 Node.js, GPU or access to evaluation data is needed to read RGB images.
 
+[Collection design, counts and evidence guide](COLLECTION_GUIDE.md) defines families, actions, geometric acquisitions and RGB streams, and locates the validation and reconstruction records.
+
 ## Read images
 
 Set `SDTUBE_DATA` to the extracted collection root containing `COLLECTION.json`.
@@ -37,7 +39,7 @@ image = collection.image_rgb('f07_fem_moving_tissue', 0)
 ```
 
 `image_rgb()` returns uint8 RGB in every reader. `PublicDataset.rgb()` retains
-its BGR contract; `AppearancePublic.rgb()` retains RGB. The explicit new method
+its BGR contract; `AppearancePublic.rgb()` retains RGB. The explicit RGB method
 avoids inferring channel order from the historical name. Each texture variant
 uses the exact same camera, geometry, material weights and annotations within
 its acquisition. The image-only reader never reads evaluation files.

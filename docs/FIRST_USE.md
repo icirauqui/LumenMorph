@@ -90,10 +90,12 @@ f08_fem_moving_tissue: RGB 480x640x3; coverage=1.000000; mean endpoint error=0.0
 PASS: 4 streams, 12 RGB reads, 128 material queries; 39 input files unchanged.
 ```
 
-The [consumer records](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark-reproducibility/tree/v2.0.3-consumer1/first_use)
+The [consumer records](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark-reproducibility/tree/v2.0.3-docs1/first_use)
 retain the image identity, commands, logs, versions and results. This clean-environment
 qualification was performed by the project team; an independent human usability
 test has not been performed.
 To repeat, use a new working directory/container; the example refuses to overwrite
 existing per-stream result folders. Mechanical records, references and stationary
 acquisitions require the complete collection below.
+
+[Collection design, counts and evidence guide](COLLECTION_GUIDE.md) defines families, actions, geometric acquisitions and RGB streams, and locates the validation and reconstruction records.

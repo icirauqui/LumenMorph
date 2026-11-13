@@ -17,8 +17,8 @@ Source code: <https://github.com/icirauqui/LumenMorph>.
 
 Software version **2.0.3** provides generation, RGB readers, material queries,
 evaluation and independent validation for the collection of eight seeded families.
-The resource includes paired cameras and motion conditions, matched procedural
-and file textures, and five path-traced appearance conditions on four families.
+The resource includes paired cameras and motion conditions, paired procedural
+and file textures on f07/f08, and five path-traced appearance conditions on four families.
 
 ## First use: read, query and score the compact example
 
@@ -110,7 +110,7 @@ f08_fem_moving_tissue: RGB 480x640x3; coverage=1.000000; mean endpoint error=0.0
 PASS: 4 streams, 12 RGB reads, 128 material queries; 39 input files unchanged.
 ```
 
-The [consumer records](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark-reproducibility/tree/v2.0.3-consumer1/first_use)
+The [consumer records](https://huggingface.co/datasets/icirauqui/synthetic-deformable-tubular-benchmark-reproducibility/tree/v2.0.3-docs1/first_use)
 retain the image identity, commands, logs, versions and results. This clean-environment
 qualification was performed by the project team; an independent human usability
 test has not been performed.
@@ -119,6 +119,8 @@ existing per-stream result folders. Mechanical records, references and stationar
 acquisitions require the complete collection below.
 
 The [collection guide](docs/COLLECTION.md) describes the complete resource and its annotation contracts.
+
+[Collection design, counts and evidence guide](docs/COLLECTION_GUIDE.md) defines families, actions, geometric acquisitions and RGB streams, and locates the validation and reconstruction records.
 
 ## Documentation
 
