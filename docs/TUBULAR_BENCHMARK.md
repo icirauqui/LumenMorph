@@ -1,6 +1,7 @@
 # Tubular benchmark organization
 
-Use [the collection guide](COLLECTION.md) for the consolidated resource and
+Use [the collection definitions and evidence guide](COLLECTION_GUIDE.md) and
+[the reader guide](COLLECTION.md) for the consolidated resource and
 [the evaluation contracts](EVALUATION.md) for scoring. `COLLECTION.json` is the
 public index: select by scientific family, motion, camera and appearance rather
 than infer those properties from numeric package directory names.
@@ -15,8 +16,8 @@ of f01, f04, f05 and f06. Appearance does not create independent geometries.
 | Records | Location in the downloaded collection | Frame convention |
 |---|---|---|
 | f01–f06 raster acquisitions | `benchmark/v1` through `benchmark/v18` | 90 per acquisition |
-| f07 raster acquisitions | `acquisitions/v19`, `v20`, `v21` | 240 per acquisition |
-| f08 raster acquisitions | `acquisitions/v22`, `v23`, `v24` | 300 per acquisition |
+| f07 raster acquisitions | `benchmark/v19`, `v20`, `v21` | 240 per acquisition |
+| f08 raster acquisitions | `benchmark/v22`, `v23`, `v24` | 300 per acquisition |
 | Path-traced appearances | `appearance/families/<family>` | 90 shared material states, five appearances |
 
 Within each group of three packages, conditions are static, FE and non-FE.

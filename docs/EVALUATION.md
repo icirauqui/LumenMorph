@@ -167,7 +167,7 @@ A public-input helper writes the complete protocol and the ordered observation g
 
 ```bash
 PYTHONPATH=. .venv/bin/python examples/prepare_monocular_protocol.py \
-  --package "$SDTUBE_DATA/acquisitions/v20" --stream moving \
+  --package "$SDTUBE_DATA/benchmark/v20" --stream moving \
   --anchors 0 80 160 239 --output ./protocol_inputs
 ```
 
@@ -180,7 +180,7 @@ to both prediction and reference camera centers.
 
 ```bash
 .venv/bin/python -m backend.src.monocular_evaluate \
-  --package "$SDTUBE_DATA/acquisitions/v20" --stream moving \
+  --package "$SDTUBE_DATA/benchmark/v20" --stream moving \
   --predictions ./tracks.npz --protocol ./protocol.json --output ./aligned_score.json
 ```
 
