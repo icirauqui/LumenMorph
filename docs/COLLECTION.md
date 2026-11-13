@@ -1,5 +1,7 @@
 # Synthetic Deformable Tubular Benchmark
 
+Start with the [first-use guide](FIRST_USE.md) to verify the compact public example, read both families/textures, query material and score a saved control. It includes direct installation and a pinned Docker route; no full dataset download or Hub credentials are needed.
+
 The collection index `COLLECTION.json` identifies every RGB acquisition by family,
 motion, camera and appearance. A family is a distinct seeded geometry. Texture
 and illumination variants reuse geometric states; they are not independent
